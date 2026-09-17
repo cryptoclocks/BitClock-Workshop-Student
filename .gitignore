@@ -1,0 +1,13 @@
+# macOS and editor files
+.DS_Store
+.vscode/
+
+# Arduino build output
+build/
+*.elf
+*.bin
+*.map
+
+# Python cache
+__pycache__/
+*.py[cod]

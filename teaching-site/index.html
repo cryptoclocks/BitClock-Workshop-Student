@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CryptoClock: จอแสดงข้อมูลเหรียญจาก Bitkub พร้อมตั้งค่าผ่าน Local IP และแสดงภาพจาก SD Card">
+  <title>CryptoClock — Bitkub Display</title>
+  <style>
+    :root {
+      --navy:#0a1628; --navy-2:#12233d; --paper:#f5f7fb; --white:#fff;
+      --ink:#172033; --muted:#65708a; --line:#dce3ee; --cyan:#34d4dc;
+      --blue:#4169e1; --orange:#ffad45; --green:#16a477; --red:#dc5b68;
+      --shadow:0 18px 50px rgba(10,22,40,.10); --radius:20px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:84px; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif; font-size:17px; line-height:1.75; }
+    a { color:inherit; }
+    code { padding:.15em .4em; border-radius:6px; background:#e8edf7; color:#284ca7; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.9em; }
+    .topbar { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; min-height:64px; padding:0 5vw; color:#fff; background:rgba(10,22,40,.94); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.1); }
+    .brand { display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:.02em; text-decoration:none; }
+    .brand-mark { display:grid; place-items:center; width:34px; height:34px; color:var(--navy); background:var(--cyan); border-radius:10px; font-size:14px; }
+    .topbar small { color:#aebbd0; }
+    .hero { position:relative; overflow:hidden; padding:76px 6vw 68px; color:#fff; background:var(--navy); }
+    .hero::after { content:""; position:absolute; top:-180px; right:-130px; width:570px; height:570px; border-radius:50%; background:radial-gradient(circle,rgba(52,212,220,.26),transparent 65%); }
+    .hero-grid { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr); gap:54px; align-items:center; max-width:1220px; margin:auto; }
+    .eyebrow { display:inline-flex; align-items:center; gap:9px; margin:0 0 19px; color:#177f9e; font-size:14px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    .hero .eyebrow { color:var(--cyan); }
+    .eyebrow::before { content:""; width:26px; height:2px; background:currentColor; }
+    h1 { max-width:760px; margin:0; font-size:clamp(42px,6.4vw,78px); line-height:1.08; letter-spacing:-.04em; }
+    .hero-copy { max-width:700px; margin:24px 0 28px; color:#cbd6e8; font-size:20px; }
+    .hero-tags { display:flex; flex-wrap:wrap; gap:10px; }
+    .hero-tags span { padding:8px 13px; border:1px solid rgba(255,255,255,.16); border-radius:999px; background:rgba(255,255,255,.06); color:#dfe8f6; font-size:14px; }
+    .device { position:relative; width:min(100%,410px); aspect-ratio:4/3; margin:auto; padding:20px; border:9px solid #273953; border-radius:28px; background:#03080f; box-shadow:0 30px 80px rgba(0,0,0,.4); }
+    .screen { height:100%; padding:24px; border:2px solid var(--orange); border-radius:14px; text-align:center; background:radial-gradient(circle at 50% 25%,#132a42,#050c16 70%); }
+    .screen small { color:#95a8c4; letter-spacing:.16em; }
+    .screen strong { display:block; margin:10px 0 0; color:var(--orange); font-size:62px; line-height:1; }
+    .screen .price { margin:12px 0 0; font-size:28px; font-weight:800; }
+    .screen .change { color:#48d4a4; font-weight:700; }
+    .dots { display:flex; justify-content:center; gap:7px; margin-top:17px; }
+    .dots i { width:7px; height:7px; border-radius:50%; background:#43536b; }
+    .dots i:first-child { width:22px; border-radius:8px; background:var(--cyan); }
+    .quick-strip { display:grid; grid-template-columns:repeat(4,1fr); max-width:1220px; margin:-1px auto 0; border-radius:0 0 var(--radius) var(--radius); overflow:hidden; background:var(--white); box-shadow:var(--shadow); }
+    .quick { padding:23px 26px; border-right:1px solid var(--line); }
+    .quick:last-child { border:0; }
+    .quick strong { display:block; color:var(--navy); font-size:22px; }
+    .quick span { color:var(--muted); font-size:14px; }
+    .page { display:grid; grid-template-columns:250px minmax(0,1fr); gap:54px; max-width:1220px; margin:auto; padding:58px 28px 100px; }
+    aside { align-self:start; position:sticky; top:92px; }
+    .toc { padding:19px; border:1px solid var(--line); border-radius:18px; background:var(--white); box-shadow:0 8px 28px rgba(10,22,40,.06); }
+    .toc-title { margin:0 0 11px; color:var(--muted); font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    .toc a { display:block; padding:7px 10px; border-radius:8px; color:#526078; font-size:14px; text-decoration:none; }
+    .toc a:hover { color:var(--blue); background:#edf2ff; }
+    article { min-width:0; }
+    section { margin:0 0 74px; }
+    h2 { margin:0 0 13px; color:var(--navy); font-size:clamp(29px,4vw,42px); line-height:1.2; letter-spacing:-.025em; }
+    h3 { margin:0 0 7px; color:var(--navy-2); font-size:20px; line-height:1.35; }
+    .section-intro { max-width:790px; margin:0 0 27px; color:var(--muted); font-size:18px; }
+    .grid { display:grid; gap:17px; }
+    .grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .card { padding:24px; border:1px solid var(--line); border-radius:var(--radius); background:var(--white); box-shadow:0 8px 24px rgba(10,22,40,.045); }
+    .card p { margin:8px 0 0; color:var(--muted); }
+    .number { display:grid; place-items:center; width:39px; height:39px; margin-bottom:17px; border-radius:12px; color:var(--navy); background:var(--cyan); font-weight:900; }
+    .icon { display:grid; place-items:center; width:44px; height:44px; margin-bottom:16px; border-radius:14px; color:var(--blue); background:#eaf0ff; font-size:22px; }
+    .check-list, .plain-list { padding:0; margin:18px 0 0; list-style:none; }
+    .check-list li, .plain-list li { position:relative; padding:8px 0 8px 32px; }
+    .check-list li::before { content:"✓"; position:absolute; left:0; top:8px; display:grid; place-items:center; width:21px; height:21px; color:#fff; background:var(--green); border-radius:50%; font-size:12px; font-weight:900; }
+    .plain-list li::before { content:"—"; position:absolute; left:4px; color:var(--blue); font-weight:900; }
+    .not-included { border-left:5px solid var(--red); background:#fff6f7; }
+    .not-included .plain-list li::before { color:var(--red); }
+    .flow { display:grid; grid-template-columns:repeat(7,auto); align-items:center; justify-content:start; gap:10px; overflow-x:auto; padding:26px; border-radius:var(--radius); background:var(--navy); color:#fff; }
+    .flow-step { min-width:145px; padding:17px 15px; border:1px solid #334965; border-radius:13px; text-align:center; background:#12233d; }
+    .flow-step strong { display:block; color:var(--cyan); }
+    .flow-arrow { color:var(--orange); font-size:25px; }
+    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:#fff; }
+    table { width:100%; border-collapse:collapse; min-width:680px; }
+    th, td { padding:17px 20px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:#fff; background:var(--navy-2); font-size:14px; }
+    tr:last-child td { border:0; }
+    td:first-child { font-weight:750; }
+    .required { display:inline-block; padding:3px 9px; border-radius:999px; color:#087957; background:#dff8ef; font-size:12px; font-weight:800; }
+    .optional { display:inline-block; padding:3px 9px; border-radius:999px; color:#946210; background:#fff0cf; font-size:12px; font-weight:800; }
+    .placeholder { min-height:240px; display:grid; place-items:center; margin-top:22px; padding:30px; border:2px dashed #97a7bd; border-radius:var(--radius); text-align:center; background:repeating-linear-gradient(135deg,#edf1f7,#edf1f7 12px,#e8edf5 12px,#e8edf5 24px); }
+    .placeholder strong { display:block; margin-bottom:5px; color:#3f5069; font-size:19px; }
+    .placeholder span { display:block; max-width:620px; color:var(--muted); }
+    .caption { margin:8px 4px 0; color:var(--muted); font-size:14px; }
+    .hardware-photo { width:100%; aspect-ratio:4/3; object-fit:contain; border-radius:14px; background:#eef2f7; }
+    .screen-mockup { width:100%; aspect-ratio:4/3; object-fit:contain; border-radius:14px; background:#071829; image-rendering:auto; }
+    .source { margin-top:12px; color:var(--muted); font-size:13px; }
+    .source a { color:var(--blue); }
+    .timeline { display:grid; gap:16px; }
+    .lesson { display:grid; grid-template-columns:125px minmax(0,1fr); overflow:hidden; border:1px solid var(--line); border-radius:var(--radius); background:#fff; }
+    .lesson-time { padding:24px 18px; color:#fff; background:var(--navy-2); text-align:center; }
+    .lesson-time strong { display:block; color:var(--cyan); font-size:25px; line-height:1.2; }
+    .lesson-body { padding:23px 26px; }
+    .lesson-body p { margin:6px 0 0; color:var(--muted); }
+    .code-tour { display:grid; gap:12px; }
+    .file { display:grid; grid-template-columns:220px minmax(0,1fr); gap:22px; padding:20px 22px; border:1px solid var(--line); border-radius:15px; background:#fff; }
+    .file code { align-self:start; font-weight:800; }
+    .file p { margin:0; color:var(--muted); }
+    pre { margin:22px 0 0; padding:22px; overflow:auto; border-radius:17px; color:#e7eefb; background:#0c192c; font:14px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    pre code { padding:0; color:inherit; background:transparent; }
+    .callout { margin-top:20px; padding:19px 22px; border-left:5px solid var(--orange); border-radius:12px; background:#fff7e8; }
+    .callout strong { color:#8a5911; }
+    .steps { counter-reset:step; display:grid; gap:16px; }
+    .step-card { position:relative; padding:23px 24px 23px 76px; border:1px solid var(--line); border-radius:var(--radius); background:#fff; }
+    .step-card::before { counter-increment:step; content:counter(step); position:absolute; top:22px; left:22px; display:grid; place-items:center; width:38px; height:38px; color:#fff; background:var(--blue); border-radius:12px; font-weight:900; }
+    .step-card p { margin:5px 0 0; color:var(--muted); }
+    details { margin-bottom:11px; border:1px solid var(--line); border-radius:14px; background:#fff; }
+    summary { padding:17px 20px; cursor:pointer; color:var(--navy-2); font-weight:800; }
+    details p { margin:0; padding:0 20px 19px; color:var(--muted); }
+    .practical details { overflow:hidden; margin-bottom:16px; }
+    .practical summary { display:flex; gap:12px; align-items:center; padding:20px 22px; font-size:18px; }
+    .practical summary span { color:var(--cyan); font-size:14px; font-weight:800; white-space:nowrap; }
+    .practical-content { padding:0 22px 24px; }
+    .practical-content p { padding:0; margin:0 0 14px; }
+    .practical-content ol { margin:0; padding-left:25px; }
+    .practical-content li { margin:8px 0; }
+    .image-slot { min-height:165px; display:grid; place-items:center; margin-top:18px; padding:22px; border:2px dashed #97a7bd; border-radius:12px; text-align:center; background:repeating-linear-gradient(135deg,#edf1f7,#edf1f7 12px,#e8edf5 12px,#e8edf5 24px); }
+    .image-slot strong { display:block; margin-bottom:5px; color:#3f5069; }
+    .image-slot span { color:var(--muted); }
+    .lesson-photo { width:100%; max-height:520px; object-fit:contain; display:block; margin-top:18px; border:1px solid var(--line); border-radius:12px; background:#fff; }
+    .lesson-photo.portrait { max-height:640px; }
+    #images .grid-2 > div { display:flex; flex-direction:column; }
+    #images .grid-2 .lesson-photo { height:300px; max-height:none; object-fit:contain; margin-top:0; }
+    #images .grid-2 .caption { min-height:42px; margin-top:10px; }
+    .photo-credit { margin:8px 0 0; color:var(--muted); font-size:13px; }
+    .diagram { display:grid; gap:12px; margin-top:20px; }
+    .diagram-row { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+    .diagram-node { min-width:130px; padding:14px 16px; border:1px solid var(--line); border-radius:12px; background:#fff; text-align:center; font-weight:800; color:var(--navy-2); }
+    .diagram-node small { display:block; margin-top:5px; color:var(--muted); font-weight:400; }
+    .diagram-arrow { color:var(--cyan); font-size:28px; font-weight:800; }
+    .assembly-checklist { margin:0; padding:0; list-style:none; }
+    .assembly-checklist li { margin:9px 0; }
+    .assembly-checklist input { width:18px; height:18px; margin-right:9px; vertical-align:middle; accent-color:var(--cyan); }
+    .rubric { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; overflow:hidden; border:1px solid var(--line); border-radius:var(--radius); background:var(--line); }
+    .rubric div { padding:21px; background:#fff; }
+    .rubric strong { display:block; margin-bottom:5px; color:var(--blue); font-size:24px; }
+    .footer { padding:45px 6vw; color:#adbad0; background:var(--navy); text-align:center; }
+    .footer strong { color:#fff; }
+    @media (max-width:960px) {
+      .hero-grid { grid-template-columns:1fr; } .device { width:390px; max-width:100%; }
+      .page { grid-template-columns:1fr; } aside { position:static; }
+      .toc { display:flex; gap:6px; overflow-x:auto; } .toc-title { display:none; } .toc a { white-space:nowrap; }
+      .quick-strip { margin:0; border-radius:0; } .grid-3 { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:680px) {
+      body { font-size:16px; } .topbar small { display:none; } .hero { padding:54px 24px; }
+      .hero-copy { font-size:18px; } .quick-strip { grid-template-columns:1fr 1fr; }
+      .quick:nth-child(2) { border-right:0; } .quick:nth-child(-n+2) { border-bottom:1px solid var(--line); }
+      .page { padding:34px 18px 70px; gap:38px; } .grid-2, .grid-3 { grid-template-columns:1fr; }
+      .lesson { grid-template-columns:1fr; } .lesson-time { text-align:left; } .lesson-time strong { display:inline; margin-right:8px; }
+      .file { grid-template-columns:1fr; gap:10px; } .rubric { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="แถบนำทางหลัก">
+    <a class="brand" href="#top"><span class="brand-mark">₿</span> CryptoClock Workshop</a>
+    <small>ESP32 · Bitkub API · CDC Action Zone · SD Card</small>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">ESP32 · Bitkub Display</p>
+        <h1>CryptoClock<br>จอแสดงข้อมูลเหรียญที่ตั้งค่าได้</h1>
+        <p class="hero-copy">แสดงราคาจริงจาก Bitkub พร้อม Profile, CDC Action Zone และภาพจาก SD Card ตั้งค่าเหรียญ ลำดับหน้า และรูปภาพได้สะดวกผ่าน Local IP</p>
+        <div class="hero-tags"><span>ราคาจริงจาก Bitkub</span><span>4 หน้าหลัก</span><span>Local Web Settings</span><span>ลงมือทำจริง</span></div>
+      </div>
+      <div class="device" aria-label="ตัวอย่างหน้าจอ CryptoClock">
+        <div class="screen"><small>BITKUB · BTC/THB</small><strong>BTC</strong><div>Bitcoin</div><div class="price">2,557,305 THB</div><div class="change">-0.73%</div><div class="dots"><i></i><i></i><i></i><i></i></div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="quick-strip" aria-label="ข้อมูลสรุป CryptoClock">
+    <div class="quick"><strong>Local IP</strong><span>ตั้งค่าจากมือถือหรือคอม</span></div>
+    <div class="quick"><strong>4 หน้าหลัก</strong><span>Profile · Coin · CDC · SD</span></div>
+    <div class="quick"><strong>Bitkub API</strong><span>Ticker V3 · TradingView History</span></div>
+    <div class="quick"><strong>1 โปรเจกต์</strong><span>พร้อมอัปโหลดลง ESP32</span></div>
+  </div>
+
+  <div class="page">
+    <aside>
+      <nav class="toc" aria-label="สารบัญ">
+        <p class="toc-title">สารบัญบทเรียน</p>
+        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#security">Security เบื้องต้น</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
+      </nav>
+    </aside>
+
+    <article>
+      <section id="overview">
+        <p class="eyebrow">01 · Overview</p><h2>โปรเจกต์นี้คืออะไร</h2>
+        <p class="section-intro">CryptoClock แสดงข้อมูลแบบเต็มหน้าจอบน ESP32 พร้อมสลับ Profile → ราคาเหรียญ → CDC Action Zone → SD Slide อัตโนมัติ และตั้งค่าเครือข่ายได้จากมือถือ</p>
+        <div class="flow"><div class="flow-step"><strong>1</strong>WiFiManager</div><div class="flow-arrow">›</div><div class="flow-step"><strong>2</strong>Bitkub API</div><div class="flow-arrow">›</div><div class="flow-step"><strong>3</strong>ประมวลผลข้อมูล</div><div class="flow-arrow">›</div><div class="flow-step"><strong>4</strong>แสดง 4 หน้าหลัก</div></div>
+      </section>
+
+      <section id="benefits">
+        <p class="eyebrow">02 · Benefits</p><h2>ประโยชน์ของ CryptoClock</h2>
+        <div class="grid grid-3">
+          <div class="card"><div class="icon">◎</div><h3>ข้อมูลราคาอัตโนมัติ</h3><p>แสดงราคาจาก Bitkub บนจอเฉพาะทาง พร้อมข้อมูลสูงสุด ต่ำสุด และการเปลี่ยนแปลงราคา</p></div>
+          <div class="card"><div class="icon">⌁</div><h3>ตั้งค่าได้ด้วยตัวเอง</h3><p>เลือกเหรียญ เปิดหรือปิดหน้า และกำหนดช่วงเวลาแสดงผลผ่านมือถือหรือคอมพิวเตอร์</p></div>
+          <div class="card"><div class="icon">▣</div><h3>ปรับภาพให้เข้ากับแบรนด์</h3><p>อัปโหลดภาพ Profile และสไลด์เพื่อใช้เป็นจอประชาสัมพันธ์ได้ทันที</p></div>
+        </div>
+      </section>
+
+      <section id="objectives">
+        <p class="eyebrow">03 · Learning objectives</p><h2>วัตถุประสงค์การเรียนรู้</h2>
+        <p class="section-intro">หลังจบเวิร์กชอป ผู้เรียนควรสามารถอธิบายและทดลองแก้โค้ดได้ด้วยตนเอง ไม่จำเป็นต้องจำทุกคำสั่ง</p>
+        <div class="card"><ul class="check-list"><li>อธิบายหน้าที่ของ <code>setup()</code> และ <code>loop()</code> ได้</li><li>เชื่อม ESP32 เข้ากับ Wi-Fi ผ่าน WiFiManager ได้</li><li>ดึงและอ่าน JSON จาก Bitkub Public API ได้</li><li>อธิบาย EMA 12/26 และสถานะ BUY/SELL zone ได้</li><li>เตรียมรูป Profile และ Slide บน SD Card ได้</li><li>อธิบายการวน 4 หน้าหลักด้วย <code>millis()</code> ได้</li></ul></div>
+      </section>
+
+      <section id="features">
+        <p class="eyebrow">04 · Features</p><h2>ฟีเจอร์หลัก</h2>
+        <div class="card"><ul class="check-list"><li>เชื่อมต่อ Wi-Fi ได้สะดวกผ่าน WiFiManager</li><li>ตั้งค่าผ่าน Local Web Settings จาก IP ของบอร์ด</li><li>เลือกเหรียญแสดงผลได้ 4 ช่องจากคู่ THB ของ Bitkub</li><li>เปิด/ปิดหน้าและกำหนดเวลาแสดงแต่ละหน้า</li><li>อัปโหลด Profile และ SD Slide เป็น JPEG</li><li>CDC Action Zone ของ BTC/THB 4H พร้อม EMA 12/26 และกราฟแท่ง</li></ul></div>
+        <div class="callout"><strong>แหล่งข้อมูล:</strong> ราคาใช้ Bitkub Ticker V3 และ CDC ใช้ TradingView History ซึ่งเป็น Public API ไม่ต้องใช้ API key ดูรูปแบบข้อมูลได้จาก <a href="https://api.bitkub.com/docs/endpoint/api/v3/market/ticker?method=GET">Ticker</a> และ <a href="https://api.bitkub.com/docs/endpoint/tradingview/history?method=GET">History</a> ของ Bitkub</div>
+      </section>
+
+      <section id="audience">
+        <p class="eyebrow">05 · Audience</p><h2>เหมาะกับใคร และควรรู้อะไรมาก่อน</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>เหมาะสำหรับ</h3><ul class="plain-list"><li>นักเรียน นักศึกษา หรือ Maker มือใหม่</li><li>ผู้ที่เคยเห็น Arduino แต่ยังแยกไฟล์ไม่คล่อง</li><li>ผู้สอนที่ต้องการตัวอย่าง IoT จบในคาบเดียว</li><li>ผู้พัฒนา CryptoClock ที่ต้องการเข้าใจแกนหลัก</li></ul></div>
+          <div class="card"><h3>พื้นฐานที่ช่วยให้เรียนง่ายขึ้น</h3><ul class="plain-list"><li>รู้จักตัวแปร ฟังก์ชัน และ array เบื้องต้น</li><li>เคยอัปโหลด Blink ลงบอร์ด ESP32</li><li>เคยเห็น JSON จะช่วยให้ตาม API ได้เร็วขึ้น</li><li>ไม่จำเป็นต้องรู้ MQTT หรือ Server</li></ul></div>
+        </div>
+      </section>
+
+      <section id="equipment">
+        <p class="eyebrow">06 · Hardware</p><h2>อุปกรณ์ที่ต้องใช้</h2>
+        <div class="table-wrap"><table><thead><tr><th>อุปกรณ์</th><th>จำนวน</th><th>หน้าที่</th><th>สถานะ</th></tr></thead><tbody>
+          <tr><td>ESP32-2432S028R</td><td>1</td><td>บอร์ด ESP-WROOM-32 พร้อมจอ 2.8 นิ้ว 240×320, Resistive Touch และช่อง MicroSD</td><td><span class="required">จำเป็น</span></td></tr>
+          <tr><td>สาย USB-A → USB-C Data</td><td>1</td><td>จ่ายไฟ 5V และอัปโหลดโปรแกรม ต้องเป็นสายที่ส่งข้อมูลได้ ไม่ใช่สายชาร์จอย่างเดียว</td><td><span class="required">จำเป็น</span></td></tr>
+          <tr><td>เฟรมอะคริลิก 2.8 นิ้ว</td><td>1 ชุด</td><td>ยึดและป้องกันบอร์ด ต้องระบุว่ารองรับ ESP32-2432S028R</td><td><span class="required">จำเป็น</span></td></tr>
+          <tr><td>คอมพิวเตอร์</td><td>1</td><td>ใช้ Arduino IDE และเชื่อมต่อบอร์ด</td><td><span class="required">จำเป็น</span></td></tr>
+          <tr><td>Wi-Fi 2.4 GHz</td><td>1 เครือข่าย</td><td>ใช้ทดสอบ WiFiManager; ESP32 ส่วนใหญ่ไม่รองรับ 5 GHz</td><td><span class="required">จำเป็น</span></td></tr>
+          <tr><td>MicroSD แบบ FAT32</td><td>1</td><td>เก็บ profile.jpg และภาพสไลด์ขนาด 320×240 ในช่อง TF บนบอร์ด</td><td><span class="required">จำเป็น</span></td></tr>
+        </tbody></table></div>
+        <h3 style="margin-top:30px">ภาพอุปกรณ์และส่วนประกอบ</h3>
+        <div class="grid grid-2">
+          <div class="card"><img class="hardware-photo" src="https://f.lnwfile.com/_/f/_raw/6p/nl/bo.jpg" alt="บอร์ด ESP32-2432S028R พร้อมจอ 2.8 นิ้ว" loading="lazy"><h3>ESP32-2432S028R</h3><p>บอร์ดและจอรวมเป็นชุดเดียว เหมาะกับงาน HMI และโปรเจกต์ IoT ที่ต้องการจอแสดงผล</p><p class="source">ภาพ: <a href="https://www.artronshop.co.th/p/725">ArtronShop</a></p></div>
+          <div class="card"><img class="hardware-photo" src="https://f.lnwfile.com/_/f/_raw/dr/ns/f4.png" alt="ผังส่วนประกอบด้านหลังของ ESP32-2432S028R" loading="lazy"><h3>ส่วนประกอบบนบอร์ด</h3><p>ESP-WROOM-32, ช่อง TF/MicroSD, RGB LED, BOOT, RESET, ลำโพง และช่องต่ออุปกรณ์ภายนอก</p><p class="source">ภาพ: <a href="https://www.artronshop.co.th/p/725">ArtronShop</a> · ภาพผังเป็น revision เก่าที่ติดป้าย Micro-USB</p></div>
+          <div class="card"><img class="hardware-photo" src="https://www.hemfrance.com/22797-thickbox_default/usb-type-c-data-cable-1m-8mm-long-tip-white-bulk.jpg" alt="สาย USB-A ไป USB Type-C สำหรับส่งข้อมูล" loading="lazy"><h3>สาย USB-A → USB-C Data</h3><p>ใช้ทั้งจ่ายไฟและ Upload โค้ด ตรวจให้แน่ใจว่าเป็นสาย Data เพราะสายชาร์จอย่างเดียวจะไม่แสดง Port</p><p class="source">ภาพตัวอย่าง: <a href="https://www.hemfrance.com/en/data-cables-charger/10053-usb-type-c-data-cable-1m-8mm-long-tip-white-bulk">HEM France</a></p></div>
+          <div class="card"><img class="hardware-photo" src="assets/lesson-photos/acrylic-frame-reference.png" alt="เฟรมอะคริลิกใสทรงตั้งสำหรับ ESP32-2432S028R"><h3>เฟรมอะคริลิก</h3><p>ใช้เฟรมอะคริลิกใสทรงตั้ง ฐานกว้าง มีเสาค้ำด้านข้างและสกรู 4 มุมตามรูปอ้างอิงนี้</p></div>
+        </div>
+        <div class="callout"><strong>Pin ที่โค้ดตั้งไว้:</strong> TFT ใช้ MISO 12, MOSI 13, SCLK 14, CS 15, DC 2 และ Backlight 21 ส่วน MicroSD ใช้ SCLK 18, MISO 19, MOSI 23 และ CS 5</div>
+      </section>
+
+      <section id="software">
+        <p class="eyebrow">07 · Software</p><h2>ซอฟต์แวร์และไลบรารี</h2>
+        <div class="grid grid-2">
+          <div class="card"><div class="number">1</div><h3>Arduino IDE</h3><p>โปรแกรมสำหรับเปิด แก้ Compile และ Upload โค้ดลง ESP32 พร้อมติดตั้ง ESP32 Board Package</p></div>
+          <div class="card"><div class="number">2</div><h3>WiFiManager</h3><p>สร้างหน้าเลือก Wi-Fi อัตโนมัติเมื่ออุปกรณ์ยังไม่มีข้อมูลเครือข่ายที่บันทึกไว้</p></div>
+          <div class="card"><div class="number">3</div><h3>TFT_eSPI</h3><p>ไลบรารีวาดข้อความ เส้น กรอบ และสีบนจอ TFT ต้องตั้งค่า Driver และ Pin ให้ตรงกับฮาร์ดแวร์</p></div>
+          <div class="card"><div class="number">4</div><h3>ArduinoJson</h3><p>อ่านค่า <code>last</code>, <code>high_24_hr</code>, <code>low_24_hr</code> และชุด OHLC จาก JSON ของ Bitkub</p></div>
+          <div class="card"><div class="number">5</div><h3>JPEGDecoder</h3><p>ถอดรหัสไฟล์ <code>profile.jpg</code> และ <code>slide1.jpg</code> จาก SD Card แล้วส่งพิกเซลไปยัง TFT_eSPI</p></div>
+          <div class="card"><div class="number">6</div><h3>HTTPClient + SD</h3><p>มาพร้อม ESP32 core ใช้เรียก HTTPS API และอ่านไฟล์จาก SD Card</p></div>
+        </div>
+        <img class="lesson-photo" src="assets/lesson-photos/01-library-manager.png" alt="Arduino IDE และ Library Manager สำหรับติดตั้งไลบรารี">
+      </section>
+
+      <section id="architecture">
+        <p class="eyebrow">08 · How it works</p><h2>โปรแกรมทำงานอย่างไร</h2>
+        <div class="steps">
+          <div class="step-card"><h3>เริ่มจอและ SD Card</h3><p><code>setup()</code> เริ่ม TFT จากนั้นตรวจ SD Card และนับไฟล์ <code>/slides/slide1.jpg</code> ถึง <code>slide8.jpg</code></p></div>
+          <div class="step-card"><h3>เชื่อมต่อ Wi-Fi</h3><p><code>autoConnect()</code> ใช้ Wi-Fi ที่เคยบันทึกไว้ หากยังไม่มีจะแสดงหน้าต่อ Wi-Fi และเปิด CryptoClock-Setup</p></div>
+          <div class="step-card"><h3>ดึงราคาจาก Bitkub</h3><p>เรียก Ticker V3 แยกตามคู่ BTC_THB, ETH_THB, KUB_THB และ USDT_THB แล้วเก็บข้อมูลลง <code>Coin</code></p></div>
+          <div class="step-card"><h3>วน 4 หน้าหลัก</h3><p><code>enterPage()</code> และ <code>updatePageSequence()</code> คุม Profile → Coin → CDC → SD Slide ด้วย <code>millis()</code></p></div>
+          <div class="step-card"><h3>คำนวณ CDC Action Zone</h3><p>อ่าน OHLC BTC/THB ระยะ 4 ชั่วโมง 60 แท่ง คำนวณ EMA 12 และ EMA 26; เส้นเร็วอยู่เหนือเส้นช้าคือ BUY zone มิฉะนั้นเป็น SELL zone</p></div>
+        </div>
+        <pre><code>หน้าต่อ Wi-Fi (แสดงเมื่อต้องตั้งค่า)
+                 ↓
+Profile → Coin: BTC → ETH → KUB → USDT → CDC Action Zone → SD Slides
+   ↑                                                            ↓
+   └──────────────────── วนกลับหน้าแรก ─────────────────────────┘</code></pre>
+      </section>
+
+      <section id="security">
+        <p class="eyebrow">09 · Security basics · 20 Minutes</p><h2>ความปลอดภัยสำหรับ CryptoClock</h2>
+        <p class="section-intro">CryptoClock ใช้ข้อมูลราคาแบบสาธารณะ แต่ยังต้องดูแล Wi‑Fi, หน้า Local Settings, SD Card และแหล่งจ่ายไฟอย่างถูกต้อง หัวข้อนี้ช่วยให้ผู้เรียนรู้ว่าอะไรควรทำตั้งแต่วันแรก</p>
+        <div class="grid grid-2">
+          <div class="card"><h3>Wi‑Fi และ Local Settings</h3><ul class="check-list"><li>ตั้งรหัสผ่าน Wi‑Fi ที่คาดเดายาก และไม่แชร์กับผู้ที่ไม่เกี่ยวข้อง</li><li>เปิดหน้า Local Settings เฉพาะบน Wi‑Fi ที่เชื่อถือได้</li><li>ไม่เผยแพร่ IP ของบอร์ดหรือเปิด Port ไปยัง Internet</li><li>ตั้งค่าเสร็จแล้วให้ปิด Hotspot <code>CryptoClock-Setup</code> ด้วยการเชื่อมต่อ Wi‑Fi ปกติให้สำเร็จ</li></ul></div>
+          <div class="card"><h3>Bitkub API และข้อมูล</h3><ul class="check-list"><li>โปรเจกต์นี้ใช้ Bitkub Public API สำหรับราคาสาธารณะ จึงไม่ต้องใช้ API Key</li><li>ห้ามใส่ API Key, Seed Phrase, รหัสผ่าน หรือข้อมูลกระเป๋าเงินลงในโค้ดหรือ SD Card</li><li>ตรวจชื่อโดเมน API ทุกครั้งก่อนแก้โค้ด และอย่าใช้ URL ที่ไม่รู้จัก</li><li>ข้อมูล CDC เป็นตัวอย่างการศึกษา ไม่ใช่คำสั่งซื้อหรือคำแนะนำลงทุน</li></ul></div>
+          <div class="card"><h3>SD Card และไฟล์รูป</h3><ul class="check-list"><li>ใช้ SD Card ที่เตรียมสำหรับโปรเจกต์ ไม่ใช้การ์ดที่มีข้อมูลส่วนตัว</li><li>อัปโหลดเฉพาะไฟล์ JPEG ที่ตรวจสอบแหล่งที่มาแล้ว</li><li>สำรองรูปและการตั้งค่าก่อนฟอร์แมตหรือเปลี่ยนการ์ด</li><li>ถอด SD Card หลังตัดไฟหรือหยุดการเขียนไฟล์แล้วเท่านั้น</li></ul></div>
+          <div class="card"><h3>ไฟเลี้ยงและฮาร์ดแวร์</h3><ul class="check-list"><li>ใช้อะแดปเตอร์ USB <strong>5V / 2A</strong> คุณภาพดี</li><li>ห้ามใช้แหล่งจ่ายไฟแรงดันเกิน 5V กับพอร์ต USB‑C</li><li>ตรวจสาย USB‑C ว่าไม่ชำรุดและไม่ร้อนผิดปกติ</li><li>วางบอร์ดในเฟรมอะคริลิกเพื่อป้องกันการลัดวงจรจากพื้นผิวโลหะ</li></ul></div>
+        </div>
+        <details><summary>ทำไมในโค้ดจึงมี <code>client.setInsecure()</code>?</summary><p>ตัวอย่างเรียนใช้คำสั่งนี้เพื่อให้ ESP32 เรียก HTTPS ได้ง่ายโดยไม่ต้องติดตั้ง Root CA certificate แต่ในการใช้งานจริงควรตรวจสอบใบรับรอง TLS ของ Bitkub ด้วย Root CA ที่ถูกต้อง เพื่อป้องกันการเชื่อมต่อกับปลายทางปลอม</p></details>
+        <div class="callout"><strong>Checklist ก่อนส่งมอบ:</strong> Wi‑Fi เป็นเครือข่ายที่เชื่อถือได้ · ไม่เก็บ Secret หรือ API Key ในบอร์ด · Local Settings ไม่ถูกเปิดออก Internet · ใช้อะแดปเตอร์ 5V/2A · SD Card ไม่มีข้อมูลส่วนตัว</div>
+      </section>
+
+      <section id="diagrams">
+        <p class="eyebrow">10 · System map</p><h2>Block Diagram และ Flowchart</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>Block Diagram</h3><p>ภาพรวมการเชื่อมต่อของอุปกรณ์และข้อมูล</p><img class="lesson-photo" src="assets/lesson-photos/02-block-diagram.png" alt="Block Diagram ของ CryptoClock พร้อม USB-C, อะแดปเตอร์, SD Card, ลำโพง, Router และมือถือ"></div>
+          <div class="card"><h3>Flowchart การทำงาน</h3><p>ลำดับที่บอร์ดทำงานตั้งแต่เปิดไฟจนแสดงผล</p><img class="lesson-photo portrait" src="assets/lesson-photos/03-flowchart.png" alt="Flowchart การทำงานของ CryptoClock ตั้งแต่เปิดไฟถึงวนหน้าจอ"></div>
+        </div>
+      </section>
+
+      <section id="code-explained">
+        <p class="eyebrow">11 · Code guide</p><h2>อธิบายโค้ดแต่ละส่วน</h2>
+        <p class="section-intro">ให้เริ่มอ่านจากหน้าที่ของแต่ละไฟล์ก่อน ไม่จำเป็นต้องเข้าใจทุกบรรทัดในครั้งแรก</p>
+        <details><summary><code>CryptoClock_Learning.ino</code> · ศูนย์กลางของโปรแกรม</summary><p>เริ่มจอ TFT, SD Card และ Wi-Fi จากนั้นเปิด Local Settings, เรียกข้อมูลราคา และสั่งให้หน้าจอวนตามลำดับที่กำหนด</p></details>
+        <details><summary><code>AppConfig.h</code> · ค่าที่ตั้งไว้ล่วงหน้า</summary><p>รวม Pin ของบอร์ด, เวลาแสดงแต่ละหน้า, ขนาดภาพ และค่าที่ใช้คำนวณ CDC เพื่อแก้ไขง่ายโดยไม่ต้องค้นหาหลายไฟล์</p></details>
+        <details><summary><code>CoinData.h / CoinData.cpp</code> · รายชื่อเหรียญ</summary><p>เก็บชื่อเหรียญ, คู่ตลาด Bitkub, สี และข้อมูลราคาที่จะส่งไปแสดงบนหน้าจอ</p></details>
+        <details><summary><code>BitkubApi.h / BitkubApi.cpp</code> · ดึงข้อมูลราคา</summary><p>เชื่อมต่อ Bitkub Public API, อ่าน JSON แล้วแปลงเป็นราคา, จุดสูงสุด/ต่ำสุด 24 ชั่วโมง และข้อมูลกราฟ CDC</p></details>
+        <details><summary><code>Pages.h / Pages.cpp</code> · วาดหน้าจอ</summary><p>กำหนดตำแหน่งข้อความ, ราคา, กราฟ และรูปภาพสำหรับหน้า Profile, ราคาเหรียญ, CDC, SD Slide และ Wi-Fi Setup</p></details>
+        <details><summary><code>JpegHelper.h / JpegHelper.cpp</code> · แสดงรูปจาก SD Card</summary><p>อ่านไฟล์ JPEG เป็นส่วนย่อยแล้วส่งไปยังจอ TFT เพื่อแสดง Profile และ Slide โดยไม่ใช้หน่วยความจำมากเกินไป</p></details>
+      </section>
+
+      <section id="files">
+        <p class="eyebrow">12 · Code tour</p><h2>รู้จักไฟล์สำคัญของโปรเจกต์</h2>
+        <div class="code-tour">
+          <div class="file"><code>CryptoClock_Learning.ino</code><p>จุดเริ่มระบบ มี WiFiManager, state ของ 4 หน้าหลัก, timer, การรีเฟรชราคา และการกลับมาเชื่อม Wi-Fi</p></div>
+          <div class="file"><code>AppConfig.h</code><p>จุดรวมค่าที่ผู้สอนแก้บ่อย: ขา SD, ระยะเวลาแต่ละหน้า, Profile, จำนวนภาพ และค่า CDC</p></div>
+          <div class="file"><code>CoinData.h / .cpp</code><p>รูปแบบข้อมูลและรายชื่อ 4 คู่เหรียญ Bitkub: BTC_THB, ETH_THB, KUB_THB และ USDT_THB</p></div>
+          <div class="file"><code>BitkubApi.h / .cpp</code><p>เรียก Ticker V3 และ TradingView History, อ่าน JSON และคำนวณ EMA สำหรับ CDC Action Zone</p></div>
+          <div class="file"><code>Pages.h / .cpp</code><p>วาดหน้าต่อ Wi-Fi, Profile, ราคาเหรียญ, CDC และ SD Slide</p></div>
+          <div class="file"><code>JpegHelper.h / .cpp</code><p>อ่าน JPEG จาก SD Card ทีละบล็อกและส่งภาพไปยังจอ TFT</p></div>
+        </div>
+        <pre><code>// หัวใจของลำดับ 4 หน้าหลัก
+Profile → Coin (วน 4 เหรียญ) → CDC → SD Slide → Profile
+
+// ราคารีเฟรชทุก 60 วินาที
+if (millis() - lastPriceUpdateAt >= PRICE_REFRESH_MS) {
+  fetchAllBitkubTickers();
+}</code></pre>
+      </section>
+
+      <section id="settings">
+        <p class="eyebrow">13 · Local Web Settings</p><h2>ตั้งค่าผ่าน Local IP ของบอร์ด</h2>
+        <p class="section-intro">เมื่อ ESP32 ต่อ Wi-Fi สำเร็จ จะเปิดหน้า Settings ในเครือข่ายเดียวกันที่ <code>http://IP-ของบอร์ด/</code> ตัวอย่างเช่น <code>http://192.168.1.42/</code> ไม่ต้องต่อ Internet เพื่อเปิดหน้าตั้งค่า แต่ต้องมี Internet เมื่อดึงราคาจาก Bitkub</p>
+        <div class="grid grid-3">
+          <div class="card"><div class="number">1</div><h3>หา IP</h3><p>ดูบรรทัด <code>Settings: http://...</code> ใน Serial Monitor หรือดูจากหน้าจอหลังต่อ Wi-Fi สำเร็จ</p></div>
+          <div class="card"><div class="number">2</div><h3>เปิดบนมือถือ/คอม</h3><p>ให้อุปกรณ์อยู่ Wi-Fi เดียวกับบอร์ด แล้วพิมพ์ IP ลงเบราว์เซอร์</p></div>
+          <div class="card"><div class="number">3</div><h3>บันทึก</h3><p>กดบันทึกแล้วการตั้งค่าถูกเก็บใน ESP32 และใช้ต่อหลังรีสตาร์ต</p></div>
+        </div>
+        <div class="card"><h3>สิ่งที่ตั้งค่าได้</h3><ul class="check-list"><li>เลือกเหรียญ 4 ช่อง: BTC, ETH, KUB, USDT, SOL, XRP, ADA หรือ DOGE</li><li>เปิด/ปิด Profile, ราคาเหรียญ, CDC และ SD Slide</li><li>กำหนดเวลาหน้า Profile, CDC และ Slide รวมถึงเวลาต่อเหรียญ (3–60 วินาที)</li><li>อัปโหลด ดูรายการ และลบ <code>/profile.jpg</code> และ <code>/slides/slide1.jpg</code> ถึง <code>slide8.jpg</code></li></ul></div>
+        <div class="grid grid-2">
+          <div class="card"><h3>เลือกเหรียญ</h3><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/3-coin-select-web.png" alt="ตัวอย่างเว็บตั้งค่าเลือกเหรียญ CryptoClock" loading="lazy"></div>
+          <div class="card"><h3>อัปโหลดรูปและข้อมูล Profile</h3><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/3-config-upload.png" alt="ตัวอย่างเว็บอัปโหลดรูป Profile CryptoClock" loading="lazy"></div>
+        </div>
+        <p class="photo-credit">ภาพอ้างอิงการตั้งค่า: <a href="https://www.cashlessthailand.com/knowledge/cryptoclock-basic">CryptoClock Basic Manual</a></p>
+        <div class="callout"><strong>รูปภาพ:</strong> Profile ควรเป็น JPEG 96×96 px; สไลด์ควรเป็น JPEG 320×240 px. ชื่อไฟล์และตำแหน่งถูกกำหนดให้อัตโนมัติจากช่องที่เลือกบนเว็บ</div>
+      </section>
+
+      <section id="afternoon">
+        <p class="eyebrow">14 · Afternoon · 3 Hours</p><h2>ภาคปฏิบัติช่วงบ่าย · 13:00–16:00 น.</h2>
+        <p class="section-intro">กดแต่ละช่วงเพื่อดูขั้นตอนย่อย ผู้เรียนทำตามลำดับนี้จนได้บอร์ดที่ใช้งานจริงหนึ่งชุด</p>
+        <div class="practical">
+          <details open><summary><span>13:00–13:15</span>1. ตรวจอุปกรณ์และประกอบชุด CryptoClock</summary><div class="practical-content"><p><strong>Checklist ก่อนเปิดไฟ</strong> — ติ๊กให้ครบทีละข้อ</p><ul class="assembly-checklist"><li><label><input type="checkbox">มีบอร์ด ESP32-2432S028R, เฟรมอะคริลิก, น็อต/เสารอง และสาย USB-C Data</label></li><li><label><input type="checkbox">วางบอร์ดในเฟรมโดยให้ช่อง USB-C, ช่อง MicroSD และปุ่ม BOOT/RESET เข้าถึงได้</label></li><li><label><input type="checkbox">ใส่เสารองและขันน็อตพอตึงด้วยมือ ห้ามขันแน่นเกินจนแผ่นอะคริลิกหรือบอร์ดบิดงอ</label></li><li><label><input type="checkbox">ใส่ MicroSD Card โดยหันด้านสัมผัสตามสัญลักษณ์ที่ช่อง TF/MicroSD และดันจนสุดพอดี</label></li><li><label><input type="checkbox">ต่อลำโพงเข้าขั้ว SPK+/SPK− ของบอร์ดตามผังขั้ว ห้ามต่อเข้าขาไฟ 5V หรือ GND</label></li><li><label><input type="checkbox">ต่อสาย USB-C Data เข้าบอร์ด; ใช้อะแดปเตอร์ USB ที่จ่าย <strong>5V / 2A</strong> สำหรับใช้งานแบบไม่ต่อคอมพิวเตอร์</label></li><li><label><input type="checkbox">ตรวจฉลากอะแดปเตอร์ว่าเอาต์พุต 5V และไม่ใช้แหล่งจ่ายแรงดันเกิน 5V</label></li></ul><ol><li>ต่อบอร์ด ESP32 เข้าคอมพิวเตอร์ด้วยสาย USB Type-C ที่ส่งข้อมูลได้</li><li>ใส่ MicroSD Card ที่ฟอร์แมต FAT32 แล้ว</li><li>ตรวจว่าบอร์ดมีไฟและคอมพิวเตอร์เห็น USB Port ใหม่</li><li>สร้างโฟลเดอร์สำหรับเก็บรูป Profile และ Slide ของตนเอง</li></ol><img class="lesson-photo" src="assets/lesson-photos/04-assembly.png" alt="ขั้นตอนประกอบบอร์ด ESP32 ในเฟรม ใส่ SD Card ต่อลำโพงและ USB-C"></div></details>
+          <details><summary><span>13:15–13:40</span>2. ตั้งค่า Arduino IDE และไลบรารี</summary><div class="practical-content"><ol><li>เปิด Arduino IDE และติดตั้ง ESP32 board package จาก Board Manager หากยังไม่มี</li><li>เปิด Library Manager แล้วติดตั้ง <code>WiFiManager</code>, <code>TFT_eSPI</code>, <code>ArduinoJson</code> และ <code>JPEGDecoder</code></li><li>เปิดโฟลเดอร์ <code>CryptoClock_Learning</code> แล้วเปิดไฟล์ <code>CryptoClock_Learning.ino</code></li><li>เลือก Board เป็น ESP32 Dev Module และเลือก Port ที่ตรงกับบอร์ด</li></ol><img class="lesson-photo" src="assets/lesson-photos/05-board-port.png" alt="เมนู Board และ Port ใน Arduino IDE"></div></details>
+          <details><summary><span>13:40–14:10</span>3. Compile และ Upload ลงบอร์ด</summary><div class="practical-content"><ol><li>กดปุ่ม Verify เพื่อตรวจว่าโค้ด Compile ผ่าน</li><li>กดปุ่ม Upload แล้วรอจนขึ้นข้อความยืนยันการอัปโหลดสำเร็จ</li><li>หากค้างที่ <code>Connecting...</code> ให้กดปุ่ม BOOT ค้างไว้ช่วงเริ่ม Upload แล้วปล่อยเมื่อเริ่มเขียนข้อมูล</li><li>เปิด Serial Monitor ที่ 115200 baud เพื่อดูสถานะ SD Card และ Wi-Fi</li></ol><img class="lesson-photo portrait" src="assets/lesson-photos/06-upload-success.jpeg" alt="Arduino IDE แสดงผล Upload สำเร็จ"></div></details>
+          <details><summary><span>14:10–14:35</span>4. เชื่อม Wi-Fi และตรวจราคาจริง</summary><div class="practical-content"><ol><li>ใช้มือถือค้นหา Wi-Fi ชื่อ <code>CryptoClock-Setup</code> แล้วเชื่อมต่อ</li><li>หน้า WiFiManager จะเปิดเอง; หากไม่เปิด ให้เข้า <code>192.168.4.1</code> ในเบราว์เซอร์</li><li>เลือก Wi-Fi 2.4 GHz ของสถานที่ ใส่รหัสผ่าน แล้วกดบันทึก</li><li>รอให้บอร์ดรีสตาร์ต จากนั้นดูว่าจอเริ่มแสดงราคาเหรียญจาก Bitkub</li></ol><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/1-wifi-select.jpg" alt="ตัวอย่างการเลือก Wi-Fi ในหน้าตั้งค่า CryptoClock" loading="lazy"><p class="photo-credit">ภาพอ้างอิง: <a href="https://www.cashlessthailand.com/knowledge/cryptoclock-basic">CryptoClock Basic Manual</a></p></div></details>
+          <details><summary><span>14:35–15:05</span>5. ใช้ Local IP ตั้งค่าหน้าจอ</summary><div class="practical-content"><ol><li>ดูบรรทัด <code>Settings: http://...</code> ใน Serial Monitor เพื่อหา IP ของบอร์ด</li><li>ให้มือถืออยู่ Wi-Fi เดียวกับบอร์ด แล้วเปิด IP นี้ในเบราว์เซอร์</li><li>เลือกเหรียญทั้ง 4 ช่อง เปิดหรือปิดหน้าที่ต้องการ และกำหนดเวลาแสดงผล</li><li>กดบันทึก แล้วตรวจว่าหน้าจอเปลี่ยนตามการตั้งค่า</li></ol><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/3-coin-select-web.png" alt="ตัวอย่างหน้าเว็บเลือกเหรียญ CryptoClock" loading="lazy"><p class="photo-credit">ภาพอ้างอิง: <a href="https://www.cashlessthailand.com/knowledge/cryptoclock-basic">CryptoClock Basic Manual</a></p></div></details>
+          <details><summary><span>15:05–15:35</span>6. อัปโหลดรูป Profile และ SD Slide</summary><div class="practical-content"><ol><li>เตรียม Profile เป็น JPEG ขนาด 96×96 px และ Slide เป็น JPEG ขนาด 320×240 px</li><li>ในหน้า Local Settings เลือกตำแหน่ง Profile หรือ Slide ที่ต้องการ</li><li>เลือกไฟล์ JPEG แล้วกดอัปโหลด รอให้หน้าเว็บกลับมาที่ Settings</li><li>ตรวจภาพ Profile และ SD Slide บนจอจริง; หากภาพไม่ขึ้นให้ใช้ JPEG แบบมาตรฐาน ไม่ใช่ Progressive JPEG</li></ol><div class="grid grid-2"><div><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/3-config-upload.png" alt="ตัวอย่างหน้าตั้งค่าอัปโหลดรูป Profile" loading="lazy"><p class="photo-credit">ภาพอ้างอิง: <a href="https://www.cashlessthailand.com/knowledge/cryptoclock-basic">CryptoClock Basic Manual</a></p></div><img class="lesson-photo" src="assets/generated/cryptoclock-slide-product.png" alt="ตัวอย่างภาพ Slide ที่แสดงบน CryptoClock ในเฟรมอะคริลิก"></div></div></details>
+          <details><summary><span>15:35–16:00</span>7. ตรวจผลงานและสรุป</summary><div class="practical-content"><ol><li>ตรวจว่าบอร์ดต่อ Wi-Fi และดึงราคา Bitkub ได้</li><li>ตรวจการวนหน้า Profile, ราคาเหรียญ, CDC และ SD Slide ตามการตั้งค่าของผู้เรียน</li><li>เปิด Local IP ซ้ำเพื่อยืนยันว่าการตั้งค่ายังอยู่</li><li>ถ่ายภาพผลงานของแต่ละคนเพื่อใช้สรุปกิจกรรม</li></ol><img class="lesson-photo" src="assets/generated/cryptoclock-price-product.png" alt="ตัวอย่าง CryptoClock ในเฟรมอะคริลิกใสทรงตั้ง"></div></details>
+        </div>
+        <div class="callout"><strong>ผลงานก่อนจบช่วงบ่าย:</strong> บอร์ดหนึ่งชุดที่แสดงข้อมูลจริงจาก Bitkub, เชื่อม Wi-Fi สำเร็จ, เปิดหน้า Settings ได้ และมีอย่างน้อยหนึ่งรูปจาก SD Card ที่ผู้เรียนอัปโหลดเอง</div>
+      </section>
+
+      <section id="images">
+        <p class="eyebrow">Screen Preview</p><h2>ตัวอย่างหน้าจอการแสดงผล</h2>
+        <p class="section-intro">CryptoClock แสดงข้อมูลและภาพแบบเต็มหน้าจอที่ความละเอียด 320 × 240 px พร้อมโลโก้เหรียญและรูปแบบการแสดงผลที่ชัดเจน</p>
+        <h3>หน้าจอหลักของ CryptoClock</h3>
+        <div class="grid grid-3">
+          <div class="card"><img class="screen-mockup" src="assets/screens/01-profile-original.png" alt="หน้า Profile"><h3>Profile</h3><p>แสดงข้อมูลและภาพที่ปรับให้เข้ากับแบรนด์</p></div>
+          <div class="card"><img class="screen-mockup" src="assets/screens/02-coin-btc-original.png" alt="หน้าราคา BTC"><h3>ราคา BTC</h3><p>ราคาอยู่กึ่งกลางจอ พร้อมข้อมูลสูงสุดและต่ำสุด</p></div>
+          <div class="card"><img class="screen-mockup" src="assets/screens/03-coin-eth-original.png" alt="หน้าราคา ETH"><h3>ราคา ETH</h3><p>สลับแสดงเหรียญที่เลือกได้อัตโนมัติ</p></div>
+          <div class="card"><img class="screen-mockup" src="assets/screens/04-coin-bnb-original.png" alt="หน้าราคา BNB"><h3>ราคา BNB</h3><p>ใช้โลโก้เหรียญจริงเพื่อการมองเห็นที่ชัดเจน</p></div>
+          <div class="card"><img class="screen-mockup" src="assets/screens/05-coin-doge-original.png" alt="หน้าราคา DOGE"><h3>ราคา DOGE</h3><p>รองรับการแสดงผลหลายเหรียญ</p></div>
+          <div class="card"><img class="screen-mockup" src="assets/screens/06-cdc-buy-original.png" alt="CDC BUY"><h3>CDC Action Zone</h3><p>แสดงกราฟ BTC/THB และสถานะ BUY/SELL</p></div>
+          <div class="card"><img class="screen-mockup" src="assets/screens/07-cdc-sell-original.png" alt="CDC SELL"><h3>CDC SELL</h3><p>แสดงสถานะตามข้อมูลราคาล่าสุด</p></div>
+          <div class="card"><img class="screen-mockup" src="assets/screens/08-sd-slide-original.png" alt="ภาพจาก SD Card"><h3>SD Slide</h3><p>แสดงภาพประชาสัมพันธ์แบบเต็มจอ</p></div>
+        </div>
+        <h3>ภาพประกอบการใช้งาน</h3>
+        <div class="grid grid-2">
+          <div><img class="lesson-photo" src="assets/generated/cryptoclock-price-product.png" alt="ผลงาน CryptoClock หน้าราคาเหรียญในเฟรมอะคริลิก"><p class="caption">CryptoClock หน้าราคาเหรียญในเฟรมอะคริลิกใส</p></div>
+          <div><img class="lesson-photo" src="assets/lesson-photos/02-block-diagram.png" alt="Block Diagram การเชื่อมต่อ CryptoClock"><p class="caption">ผังการเชื่อมต่ออุปกรณ์และข้อมูล</p></div>
+          <div><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/1-wifi-select.jpg" alt="ตัวอย่างการเลือก Wi-Fi" loading="lazy"><p class="caption">ตั้งค่า Wi-Fi ผ่านหน้า Config</p></div>
+          <div><img class="lesson-photo" src="assets/lesson-photos/01-library-manager.png" alt="Arduino IDE Library Manager"><p class="caption">ติดตั้งไลบรารีที่จำเป็นใน Arduino IDE</p></div>
+          <div><img class="lesson-photo" src="assets/generated/four-main-screens.png" alt="หน้าจอหลักทั้งสี่ของ CryptoClock"><p class="caption">Profile, ราคาเหรียญ, CDC และ SD Slide</p></div>
+          <div><img class="lesson-photo" src="assets/generated/bitkub-json-serial.png" alt="ข้อมูล Bitkub JSON และ Serial Monitor"><p class="caption">เส้นทางข้อมูลจาก Bitkub API สู่บอร์ด</p></div>
+          <div><img class="lesson-photo" src="assets/generated/cryptoclock-cdc-product.png" alt="CryptoClock แสดง CDC Action Zone"><p class="caption">CDC Action Zone แสดงกราฟและสถานะ BUY</p></div>
+          <div><img class="lesson-photo" src="assets/generated/sd-card-structure.png" alt="โครงสร้างไฟล์ใน MicroSD Card"><p class="caption">โครงสร้างไฟล์ Profile และ Slide บน MicroSD Card</p></div>
+        </div>
+      </section>
+
+      <section id="troubleshoot">
+        <p class="eyebrow">16 · Troubleshooting</p><h2>ปัญหาที่พบบ่อย</h2>
+        <details><summary>Arduino IDE ไม่พบ Port ของ ESP32</summary><p>เปลี่ยนสาย USB ก่อน เพราะบางเส้นชาร์จได้อย่างเดียว จากนั้นตรวจ USB Driver เช่น CP210x หรือ CH340 และลองเสียบ Port อื่น</p></details>
+        <details><summary>Compile แล้วขึ้นว่าไม่พบ WiFiManager.h</summary><p>เปิด Library Manager ค้นหา WiFiManager ติดตั้งไลบรารี แล้วปิดและเปิด Arduino IDE ใหม่หนึ่งครั้ง</p></details>
+        <details><summary>จอขาว จอดำ หรือภาพเป็นเส้น</summary><p>ตรวจการตั้งค่า TFT_eSPI ให้ตรงรุ่นจอ ตรวจ Pin และไฟเลี้ยง หากมีไฟ Backlight แต่ไม่มีภาพ มักเกิดจาก Driver หรือ Pin configuration ไม่ตรง</p></details>
+        <details><summary>ไม่พบเครือข่าย CryptoClock-Setup</summary><p>WiFiManager จะเปิด AP เมื่อยังไม่มี Wi-Fi ที่เชื่อมได้ หากบอร์ดจำเครือข่ายเดิมอยู่ให้ล้างค่าด้วย <code>wifiManager.resetSettings()</code> ชั่วคราว แล้ว Upload ใหม่</p></details>
+        <details><summary>เชื่อม Wi-Fi ไม่สำเร็จ</summary><p>ตรวจว่าเป็นเครือข่าย 2.4 GHz รหัสผ่านถูกต้อง และหน้า Login ของ Wi-Fi ไม่ต้องยืนยันเพิ่มเติม บอร์ด ESP32 ทั่วไปไม่เชื่อม 5 GHz</p></details>
+        <details><summary>ราคา Bitkub ไม่ขึ้นหรือขึ้น Waiting for Bitkub API</summary><p>ตรวจอินเทอร์เน็ตและเปิด Serial Monitor ดู HTTP code จากนั้นลองเปิด URL Ticker V3 บนคอมพิวเตอร์ หาก API ไม่พร้อม โปรแกรมจะเก็บค่าล่าสุดที่เคยดึงสำเร็จไว้</p></details>
+        <details><summary>หน้า CDC ขึ้น CDC data unavailable</summary><p>ตรวจ Wi-Fi และเวลาจาก Bitkub server หน้า CDC ต้องเรียก TradingView History ซึ่งมีข้อมูลมากกว่า Ticker จึงอาจใช้เวลาหลายวินาที</p></details>
+        <details><summary>SD Card อ่านได้แต่ภาพไม่ขึ้น</summary><p>ใช้ JPEG แบบมาตรฐาน ไม่ใช่ Progressive JPEG ตั้งชื่อ <code>profile.jpg</code> และ <code>/slides/slide1.jpg</code> ด้วยตัวพิมพ์เล็ก และใช้ภาพ 320×240 สำหรับ Slide</p></details>
+        <details><summary>ตัวหนังสือหรือหน้าจอกลับหัว</summary><p>ปรับค่าใน <code>tft.setRotation(1)</code> เป็น 0, 2 หรือ 3 แล้ว Upload ใหม่จนตรงกับแนวติดตั้งจอ</p></details>
+      </section>
+
+      <section id="exercises">
+        <p class="eyebrow">17 · Practice</p><h2>แบบฝึกหัดและเกณฑ์จบคาบ</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>ระดับเริ่มต้น</h3><ul class="plain-list"><li>เปลี่ยน KUB เป็นเหรียญ Bitkub คู่อื่น</li><li>เปลี่ยนเวลาหน้า Coin เป็น 10 วินาที</li><li>เพิ่มภาพ slide2.jpg ลง SD Card</li></ul></div>
+          <div class="card"><h3>ระดับท้าทาย</h3><ul class="plain-list"><li>แสดงเวลาที่อัปเดตราคาล่าสุด</li><li>เปลี่ยน CDC จาก 4H เป็น 1H</li><li>เพิ่มสถานะ Wi-Fi หลุดบนหน้า Coin</li></ul></div>
+        </div>
+        <h3 style="margin-top:28px">เกณฑ์ตรวจผลงาน</h3>
+        <div class="rubric"><div><strong>25%</strong>Compile และ Upload สำเร็จ</div><div><strong>25%</strong>เชื่อม Wi-Fi ได้</div><div><strong>25%</strong>วนครบ 4 หน้า</div><div><strong>25%</strong>แก้ข้อมูลได้เอง 1 จุด</div></div>
+      </section>
+
+      <section id="glossary">
+        <p class="eyebrow">18 · Glossary</p><h2>คำศัพท์สำคัญ</h2>
+        <div class="table-wrap"><table><thead><tr><th>คำศัพท์</th><th>ความหมายแบบง่าย</th></tr></thead><tbody>
+          <tr><td>ESP32</td><td>ไมโครคอนโทรลเลอร์ที่มี Wi-Fi และ Bluetooth ในตัว</td></tr>
+          <tr><td>WiFiManager</td><td>ไลบรารีช่วยสร้างหน้าเลือกและบันทึก Wi-Fi โดยไม่ฝังรหัสผ่านในโค้ด</td></tr>
+          <tr><td>TFT</td><td>จอสีขนาดเล็กที่ ESP32 สั่งวาดด้วยพิกัด</td></tr>
+          <tr><td>struct</td><td>แบบฟอร์มข้อมูลที่รวมค่าหลายชนิดไว้เป็นหนึ่งรายการ</td></tr>
+          <tr><td>array</td><td>ชุดข้อมูลหลายรายการที่เรียกด้วยลำดับ index เริ่มจาก 0</td></tr>
+          <tr><td>REST API</td><td>ช่องทางที่ ESP32 ส่ง HTTP GET ไปขอข้อมูลราคาจาก Bitkub</td></tr>
+          <tr><td>JSON</td><td>รูปแบบข้อความที่ Bitkub ใช้ส่งข้อมูล เช่น last และ percent_change</td></tr>
+          <tr><td>OHLC</td><td>ราคาเปิด สูงสุด ต่ำสุด และปิดของแท่งราคาแต่ละช่วงเวลา</td></tr>
+          <tr><td>EMA</td><td>ค่าเฉลี่ยเคลื่อนที่แบบให้น้ำหนักกับราคาล่าสุด ใช้เปรียบเทียบโซน CDC</td></tr>
+          <tr><td>millis()</td><td>เวลาที่ผ่านไปตั้งแต่บอร์ดเริ่มทำงาน หน่วยเป็นมิลลิวินาที</td></tr>
+          <tr><td>Compile</td><td>แปลงโค้ดที่เขียนให้เป็นโปรแกรมที่บอร์ดเข้าใจ</td></tr>
+          <tr><td>Upload</td><td>ส่งโปรแกรมจากคอมพิวเตอร์ลงบอร์ด ESP32</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section>
+        <p class="eyebrow">19 · Next lesson</p><h2>เรียนต่อจากนี้ได้อย่างไร</h2>
+        <p class="section-intro">เมื่อผู้เรียนเข้าใจระบบนี้แล้ว บทต่อไปควรเพิ่มความสามารถทีละเรื่อง โดยไม่ดึง MQTT, OTA และระบบขนาดใหญ่กลับมาพร้อมกัน</p>
+        <div class="grid grid-3"><div class="card"><div class="number">1</div><h3>Touch Navigation</h3><p>แตะซ้าย/ขวาเพื่อเปลี่ยนหน้าและเลือกเหรียญ โดยยังเก็บระบบสไลด์อัตโนมัติไว้</p></div><div class="card"><div class="number">2</div><h3>ตั้งค่าจาก SD</h3><p>ย้าย Profile รายชื่อเหรียญ และเวลาแต่ละหน้าไปไว้ในไฟล์ JSON บน SD</p></div><div class="card"><div class="number">3</div><h3>เพิ่มความปลอดภัย HTTPS</h3><p>ฝัง Root CA ของ Bitkub แทน <code>setInsecure()</code> สำหรับเวอร์ชันที่นำไปใช้งานจริง</p></div></div>
+      </section>
+    </article>
+  </div>
+
+  <footer class="footer"><strong>CryptoClock</strong><br>ESP32 · Bitkub API · CDC Action Zone · SD Card</footer>
+</body>
+</html>
