@@ -186,7 +186,7 @@
     <aside>
       <nav class="toc" aria-label="สารบัญ">
         <p class="toc-title">สารบัญบทเรียน</p>
-        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
+        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
       </nav>
     </aside>
 
@@ -322,6 +322,26 @@ Profile → Coin: BTC → ETH → KUB → USDT → CDC Action Zone → SD Slides
           <div class="card"><h3>Block Diagram</h3><p>ภาพรวมการเชื่อมต่อของอุปกรณ์และข้อมูล</p><img class="lesson-photo" src="assets/lesson-photos/02-block-diagram.png" alt="Block Diagram ของ CryptoClock พร้อม USB-C, อะแดปเตอร์, SD Card, ลำโพง, Router และมือถือ"></div>
           <div class="card"><h3>Flowchart การทำงาน</h3><p>ลำดับที่บอร์ดทำงานตั้งแต่เปิดไฟจนแสดงผล</p><img class="lesson-photo portrait" src="assets/lesson-photos/03-flowchart.png" alt="Flowchart การทำงานของ CryptoClock ตั้งแต่เปิดไฟถึงวนหน้าจอ"></div>
         </div>
+      </section>
+
+      <section id="cdc-theory">
+        <p class="eyebrow">CDC Action Zone V3.0 · Theory</p><h2>CDC Action Zone V3.0 คำนวณอะไรจริง</h2>
+        <p class="section-intro">หัวข้อนี้อธิบายตาม <code>page26.cpp</code> ของ CryptoClock V3.0: ระบบนำราคาปิดของแท่งเทียนมาสร้างเส้น EMA สองเส้น แล้วใช้ตำแหน่งของเส้นทั้งคู่เพื่อจัด “โซน” บนหน้าจอ</p>
+        <div class="grid grid-3">
+          <div class="card"><div class="number">1</div><h3>ข้อมูลเข้า</h3><p>V3.0 ขอ Kline ของ <code>BTCUSDT</code> จำนวนสูงสุด 100 แท่ง จาก Binance data API; เลือกกรอบเวลา 1H, 4H หรือ 1D ได้ โดยค่าเริ่มต้นคือ 4H</p></div>
+          <div class="card"><div class="number">2</div><h3>เส้น EMA</h3><p>ใช้ราคาปิดของทุกแท่งสร้าง EMA เร็ว 12 และ EMA ช้า 26 โดยเริ่มค่า EMA ทั้งคู่จากราคาปิดของแท่งแรก</p></div>
+          <div class="card"><div class="number">3</div><h3>โซนล่าสุด</h3><p>หาก EMA 12 มากกว่า EMA 26 โค้ดกำหนด <strong>BUY zone</strong>; หากไม่มากกว่า จะกำหนด <strong>SELL zone</strong></p></div>
+        </div>
+        <pre><code>k = 2 / (period + 1)
+EMA วันนี้ = (ราคาปิดวันนี้ × k) + (EMA ก่อนหน้า × (1 − k))
+
+EMA 12 &gt; EMA 26  → BUY zone
+EMA 12 ≤ EMA 26  → SELL zone</code></pre>
+        <div class="grid grid-2">
+          <div class="card"><h3>สัญญาณเปลี่ยนโซนใน V3.0</h3><ul class="plain-list"><li>SELL → BUY: เมื่อแท่งก่อนอยู่ SELL และแท่งล่าสุดย้ายเป็น BUY</li><li>BUY → SELL: เมื่อแท่งก่อนอยู่ BUY และแท่งล่าสุดย้ายเป็น SELL</li><li>หากยังอยู่โซนเดิม จะไม่มีสัญญาณใหม่</li></ul><p>บนจอ V3.0: เส้น EMA 12 สีฟ้าอมเขียว, EMA 26 สีชมพู; แท่งปกติใน BUY/SELL zone เป็นเขียว/แดง และแท่งที่เปลี่ยนโซนเป็นน้ำเงิน/เหลืองตามลำดับ</p></div>
+          <div class="card"><h3>V3.0 กับเวอร์ชันเรียน</h3><div class="table-wrap"><table><thead><tr><th>รายการ</th><th>V3.0 ต้นฉบับ</th><th>เวอร์ชันเรียน</th></tr></thead><tbody><tr><td>ตลาด</td><td>BTCUSDT</td><td>BTC/THB จาก Bitkub</td></tr><tr><td>กรอบเวลา</td><td>1H / 4H / 1D</td><td>4H</td></tr><tr><td>จำนวนแท่ง</td><td>สูงสุด 100</td><td>60</td></tr><tr><td>ผลลัพธ์</td><td>โซนและจุดเปลี่ยนโซน</td><td>BUY/SELL zone ล่าสุด</td></tr></tbody></table></div></div>
+        </div>
+        <div class="callout"><strong>ขอบเขตสำคัญ:</strong> BUY/SELL บนหน้านี้คือป้ายสถานะจากการเปรียบเทียบ EMA ตามโค้ดเท่านั้น ไม่ใช่คำสั่งซื้อขาย ไม่มีการคำนวณขนาดการลงทุน, จุดตัดขาดทุน, ค่าธรรมเนียม หรือการรับประกันผลลัพธ์ และค่า EMA อาจเปลี่ยนได้ก่อนแท่งเทียนปัจจุบันปิด</div>
       </section>
 
       <section id="code-explained">
