@@ -186,7 +186,7 @@
     <aside>
       <nav class="toc" aria-label="สารบัญ">
         <p class="toc-title">สารบัญบทเรียน</p>
-        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#security">Security เบื้องต้น</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
+        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
       </nav>
     </aside>
 
@@ -275,6 +275,21 @@ Profile → Coin: BTC → ETH → KUB → USDT → CDC Action Zone → SD Slides
    └──────────────────── วนกลับหน้าแรก ─────────────────────────┘</code></pre>
       </section>
 
+      <section id="verify">
+        <p class="eyebrow">09 · Why Verify? · 30 Minutes</p><h2>ทำไมต้องตรวจสอบข้อมูลก่อนเชื่อราคา</h2>
+        <p class="section-intro">BitClock เป็นหน้าจอแสดงผล ไม่ใช่แหล่งข้อมูลราคาเอง ผู้เรียนจึงควรรู้เส้นทางของข้อมูล และตรวจสอบว่าเลขที่เห็นตรงกับข้อมูลจากต้นทางในเวลาเดียวกัน</p>
+        <div class="grid grid-3">
+          <div class="card"><div class="number">1</div><h3>ดูต้นทาง</h3><p>โปรเจกต์เรียก Bitkub Public API ผ่านคู่ตลาด เช่น <code>BTC_THB</code> โดยไม่ต้องใช้ API Key</p></div>
+          <div class="card"><div class="number">2</div><h3>ดูเวลา</h3><p>ราคาเปลี่ยนตลอดเวลา จึงต้องเทียบในช่วงเวลาเดียวกัน และรู้ว่าการเชื่อมต่อ Wi‑Fi อาจทำให้ข้อมูลมาช้าได้</p></div>
+          <div class="card"><div class="number">3</div><h3>ดูความสมเหตุสมผล</h3><p>หากตัวเลขไม่ตรง ให้ตรวจ Wi‑Fi, HTTP response และชื่อคู่ตลาดก่อนสรุปว่าจอหรือ API ผิดพลาด</p></div>
+        </div>
+        <div class="grid grid-2" style="margin-top:17px">
+          <div class="card"><h3>กิจกรรม: API → JSON → Serial Monitor → จอ</h3><ol><li>เปิด Serial Monitor ที่ 115200 baud</li><li>ดูสถานะการดึงราคาและชื่อคู่ตลาด</li><li>เปิดหน้า Bitkub ของคู่เดียวกันบนมือถือหรือคอมพิวเตอร์</li><li>เทียบราคาและเวลา แล้วบันทึกผลว่าตรงหรือแตกต่างเพราะอะไร</li></ol></div>
+          <div class="card"><img class="lesson-photo" src="assets/generated/bitkub-json-serial.png" alt="ตัวอย่าง JSON จาก Bitkub และ Serial Monitor ของ CryptoClock"><p class="caption">ตัวอย่างการตามข้อมูลจาก API ถึงหน้าจอ</p></div>
+        </div>
+        <div class="callout"><strong>หลักคิด:</strong> ตรวจแหล่งข้อมูล · ตรวจเวลา · ตรวจเส้นทางข้อมูล — แล้วจึงตัดสินใจจากสิ่งที่หน้าจอแสดง</div>
+      </section>
+
       <section id="security">
         <p class="eyebrow">09 · Security basics · 20 Minutes</p><h2>ความปลอดภัยสำหรับ CryptoClock</h2>
         <p class="section-intro">CryptoClock ใช้ข้อมูลราคาแบบสาธารณะ แต่ยังต้องดูแล Wi‑Fi, หน้า Local Settings, SD Card และแหล่งจ่ายไฟอย่างถูกต้อง หัวข้อนี้ช่วยให้ผู้เรียนรู้ว่าอะไรควรทำตั้งแต่วันแรก</p>
@@ -286,6 +301,19 @@ Profile → Coin: BTC → ETH → KUB → USDT → CDC Action Zone → SD Slides
         </div>
         <details><summary>ทำไมในโค้ดจึงมี <code>client.setInsecure()</code>?</summary><p>ตัวอย่างเรียนใช้คำสั่งนี้เพื่อให้ ESP32 เรียก HTTPS ได้ง่ายโดยไม่ต้องติดตั้ง Root CA certificate แต่ในการใช้งานจริงควรตรวจสอบใบรับรอง TLS ของ Bitkub ด้วย Root CA ที่ถูกต้อง เพื่อป้องกันการเชื่อมต่อกับปลายทางปลอม</p></details>
         <div class="callout"><strong>Checklist ก่อนส่งมอบ:</strong> Wi‑Fi เป็นเครือข่ายที่เชื่อถือได้ · ไม่เก็บ Secret หรือ API Key ในบอร์ด · Local Settings ไม่ถูกเปิดออก Internet · ใช้อะแดปเตอร์ 5V/2A · SD Card ไม่มีข้อมูลส่วนตัว</div>
+      </section>
+
+      <section id="wifi-hygiene">
+        <p class="eyebrow">Wi‑Fi Hygiene · 20 Minutes</p><h2>แยกเครือข่ายและตั้งค่าอย่างปลอดภัย</h2>
+        <p class="section-intro">การตั้งค่าและการแสดงราคาทำงานได้บน Wi‑Fi เดียวกัน แต่ไม่ควรเปิดหน้า Local Settings ออกสู่ Internet หรือใช้เครือข่ายเดียวกับอุปกรณ์สำคัญโดยไม่จำเป็น</p>
+        <pre><code>Internet → Router / IoT Wi‑Fi → CryptoClock
+                   └──────────→ มือถือผู้ดูแล (เปิด Local IP เฉพาะในวงเดียวกัน)
+
+ไม่ควร: Internet → Port Forward → Local Settings ของ CryptoClock</code></pre>
+        <div class="grid grid-2" style="margin-top:17px">
+          <div class="card"><h3>ก่อนเชื่อมต่อ</h3><ul class="check-list"><li>เลือก Wi‑Fi 2.4 GHz ที่เชื่อถือได้</li><li>ใช้รหัสผ่านที่เดายาก</li><li>ให้มือถือและบอร์ดอยู่เครือข่ายเดียวกันเฉพาะตอนตั้งค่า</li></ul></div>
+          <div class="card"><h3>หลังตั้งค่า</h3><ul class="check-list"><li>ไม่เปิด Port Forward ไปที่บอร์ด</li><li>ไม่บันทึกรหัสผ่าน Wi‑Fi ในรูปหรือเอกสารที่แชร์</li><li>ตรวจว่าหน้า Local Settings เปิดได้เฉพาะภายในวง Wi‑Fi</li></ul></div>
+        </div>
       </section>
 
       <section id="diagrams">
@@ -356,6 +384,16 @@ if (millis() - lastPriceUpdateAt >= PRICE_REFRESH_MS) {
           <details><summary><span>15:35–16:00</span>7. ตรวจผลงานและสรุป</summary><div class="practical-content"><ol><li>ตรวจว่าบอร์ดต่อ Wi-Fi และดึงราคา Bitkub ได้</li><li>ตรวจการวนหน้า Profile, ราคาเหรียญ, CDC และ SD Slide ตามการตั้งค่าของผู้เรียน</li><li>เปิด Local IP ซ้ำเพื่อยืนยันว่าการตั้งค่ายังอยู่</li><li>ถ่ายภาพผลงานของแต่ละคนเพื่อใช้สรุปกิจกรรม</li></ol><img class="lesson-photo" src="assets/generated/cryptoclock-price-product.png" alt="ตัวอย่าง CryptoClock ในเฟรมอะคริลิกใสทรงตั้ง"></div></details>
         </div>
         <div class="callout"><strong>ผลงานก่อนจบช่วงบ่าย:</strong> บอร์ดหนึ่งชุดที่แสดงข้อมูลจริงจาก Bitkub, เชื่อม Wi-Fi สำเร็จ, เปิดหน้า Settings ได้ และมีอย่างน้อยหนึ่งรูปจาก SD Card ที่ผู้เรียนอัปโหลดเอง</div>
+      </section>
+
+      <section id="outcomes">
+        <p class="eyebrow">Workshop outcome</p><h2>สิ่งที่ผู้เรียนได้กลับไป</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>ผลงานและไฟล์</h3><ul class="check-list"><li>BitClock ที่ประกอบและตั้งค่าด้วยตัวเอง</li><li>โค้ด CryptoClock พร้อมอัปโหลดซ้ำได้</li><li>คู่มือ Local Settings และโครงสร้างไฟล์ SD Card</li><li>ความเข้าใจพื้นฐานเรื่อง Hardware, Price Data และ Network</li></ul></div>
+          <div class="card"><h3>กรอบคิดที่ใช้ต่อได้</h3><ul class="check-list"><li>ตรวจต้นทางและเวลาของข้อมูลก่อนเชื่อราคา</li><li>ตั้งคำถามกับอุปกรณ์ IoT ที่ต่อ Wi‑Fi ได้</li><li>แยกเครือข่ายและไม่เปิดหน้า Settings สู่ Internet</li><li>แก้ปัญหาเบื้องต้นด้วย Serial Monitor และ checklist</li></ul></div>
+        </div>
+        <h3 style="margin-top:28px">ตรวจรับงานก่อนกลับบ้าน</h3>
+        <div class="grid grid-2"><div class="card"><ul class="assembly-checklist"><li><label><input type="checkbox">จอติดและไม่กระพริบผิดปกติ</label></li><li><label><input type="checkbox">เชื่อม Wi‑Fi สำเร็จ</label></li><li><label><input type="checkbox">ราคา BTC/THB ขึ้นและตรวจสอบกับ Bitkub แล้ว</label></li><li><label><input type="checkbox">เปิด Local IP จากมือถือได้</label></li></ul></div><div class="card"><ul class="assembly-checklist"><li><label><input type="checkbox">เลือกเหรียญและบันทึกการตั้งค่าได้</label></li><li><label><input type="checkbox">วนครบ Profile, Coin, CDC และ SD Slide</label></li><li><label><input type="checkbox">อัปโหลดรูปจาก SD Card ได้อย่างน้อย 1 รูป</label></li><li><label><input type="checkbox">ใช้อะแดปเตอร์ 5V / 2A และเก็บงานในเฟรมเรียบร้อย</label></li></ul></div></div>
       </section>
 
       <section id="images">
