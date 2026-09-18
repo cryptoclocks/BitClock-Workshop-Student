@@ -23,6 +23,7 @@
 #include "AppConfig.h"
 #include "CoinData.h"
 #include "BitkubApi.h"
+#include "BootstrapAssets.h"
 #include "Pages.h"
 
 enum MainPage {
@@ -47,6 +48,7 @@ bool sdReady = false;
 bool pageEnabled[] = {true, true, true, true};
 unsigned long pageDurationMs[] = {PROFILE_PAGE_MS, COIN_PAGE_MS, CDC_PAGE_MS, SD_SLIDE_MS};
 File uploadFile;
+String bootstrapStatus;
 
 unsigned long pageStartedAt = 0;
 unsigned long lastPriceUpdateAt = 0;
@@ -55,6 +57,28 @@ unsigned long lastReconnectAttemptAt = 0;
 
 uint8_t countSdSlides();
 void enterPage(MainPage page);
+
+void showBootstrapStatus(const String& message, uint16_t color) {
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(TFT_CYAN, TFT_BLACK);
+  tft.drawString("Preparing SD Card...", tft.width() / 2, 92, 2);
+  tft.setTextColor(color, TFT_BLACK);
+  tft.drawString(message, tft.width() / 2, 126, 2);
+  tft.setTextDatum(TL_DATUM);
+}
+
+void bootstrapMissingAssets() {
+  if (!sdReady) {
+    bootstrapStatus = "ไม่พบ SD Card จึงยังดาวน์โหลด Asset ไม่ได้";
+    return;
+  }
+  showBootstrapStatus("Checking starter assets", TFT_LIGHTGREY);
+  bool success = downloadMissingBootstrapAssets(bootstrapStatus);
+  sdSlideCount = countSdSlides();
+  showBootstrapStatus(success ? "Starter assets ready" : "Asset download failed", success ? TFT_GREEN : TFT_RED);
+  delay(900);
+}
 
 void onWifiConfigMode(WiFiManager* manager) {
   showWifiSetupPage(tft, manager->getConfigPortalSSID());
@@ -139,6 +163,10 @@ void handleSettingsHome() {
     "<input type='file' name='image' accept='.jpg,.jpeg,image/jpeg' required><button type='submit'>อัปโหลด JPEG</button></form><h2>รูปที่มีอยู่</h2>");
   html += imageFileList();
   html += F("</section>"
+    "<section><h2>Asset เริ่มต้นจาก GitHub</h2><small>ดาวน์โหลดเฉพาะไฟล์ที่ยังไม่มี: profile.jpg และ slide1.jpg · ไฟล์ที่อัปโหลดเองจะไม่ถูกเขียนทับ</small>"
+    "<form action='/bootstrap-assets' method='post'><button type='submit'>ดาวน์โหลด Asset ที่ยังขาด</button></form><p>");
+  html += bootstrapStatus;
+  html += F("</p></section>"
     "<section><h2>สถานะ SD Card</h2><p>SD: ");
   html += sdReady ? "พร้อมใช้งาน" : "ไม่พบ SD Card";
   html += " · สไลด์: " + String(sdSlideCount) + " ภาพ</p></section></html>";
@@ -209,11 +237,18 @@ void handleDeleteImage() {
   settingsServer.send(303);
 }
 
+void handleBootstrapAssets() {
+  bootstrapMissingAssets();
+  settingsServer.sendHeader("Location", "/", true);
+  settingsServer.send(303);
+}
+
 void setupSettingsServer() {
   settingsServer.on("/", HTTP_GET, handleSettingsHome);
   settingsServer.on("/save", HTTP_POST, handleSettingsSave);
   settingsServer.on("/upload", HTTP_POST, finishImageUpload, handleImageUpload);
   settingsServer.on("/delete", HTTP_GET, handleDeleteImage);
+  settingsServer.on("/bootstrap-assets", HTTP_POST, handleBootstrapAssets);
   settingsServer.onNotFound([]() { settingsServer.send(404, "text/plain", "Not found"); });
   settingsServer.begin();
   Serial.printf("Settings: http://%s/\n", WiFi.localIP().toString().c_str());
@@ -342,6 +377,7 @@ void setup() {
   }
 
   showWifiConnectedPage(tft, WiFi.localIP().toString());
+  bootstrapMissingAssets();
   setupSettingsServer();
   configTime(7 * 3600, 0, "pool.ntp.org", "time.nist.gov");
   fetchAllBitkubTickers();
