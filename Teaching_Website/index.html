@@ -201,7 +201,7 @@
     <aside>
       <nav class="toc" aria-label="สารบัญ">
         <p class="toc-title">สารบัญบทเรียน</p>
-        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#download">ดาวน์โหลดและติดตั้ง</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ดและไฟล์</a><a href="#code-viewer">ดูโค้ดทั้งหมด</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
+        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#download">ดาวน์โหลดและติดตั้ง</a><a href="#littlefs-upload">ติดตั้ง LittleFS Data Upload</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ดและไฟล์</a><a href="#code-viewer">ดูโค้ดทั้งหมด</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
       </nav>
     </aside>
 
@@ -271,6 +271,17 @@
         <div class="callout"><strong>รองรับทั้ง macOS และ Windows 10/11:</strong> แตกไฟล์ ZIP ก่อน แล้วเปิด <code>Install_Libraries.command</code> บน macOS หรือ <code>Install_Libraries.bat</code> บน Windows เพื่อติดตั้งไลบรารีที่รวมมาอัตโนมัติ จากนั้นติดตั้ง <strong>esp32 by Espressif Systems 2.0.17</strong> ผ่าน Boards Manager เพียงครั้งเดียวต่อเครื่อง</div>
       </section>
 
+      <section id="littlefs-upload">
+        <p class="eyebrow">08 · LittleFS Data Upload</p><h2>ติดตั้ง LittleFS Data Upload</h2>
+        <p class="section-intro">ติดตั้งครั้งเดียว แล้วใช้ส่งไฟล์จากโฟลเดอร์ <code>data/</code> เข้า LittleFS ของ ESP32 ได้โดยตรง</p>
+        <div class="steps">
+          <div class="step-card"><h3>ดาวน์โหลดไฟล์ VSIX</h3><p>กด <a href="https://github.com/earlephilhower/arduino-littlefs-upload/releases" target="_blank" rel="noopener"><strong>ดาวน์โหลด arduino-littlefs-upload (.vsix)</strong></a> แล้วเลือกไฟล์เวอร์ชันล่าสุด</p></div>
+          <div class="step-card"><h3>วางไฟล์ในโฟลเดอร์ Plugin</h3><p><strong>macOS:</strong> <code>~/.arduinoIDE/plugins/</code><br><strong>Windows:</strong> <code>C:\Users\ชื่อผู้ใช้\.arduinoIDE\plugins\</code></p></div>
+          <div class="step-card"><h3>เปิด Arduino IDE ใหม่หนึ่งครั้ง</h3><p>จากนั้นปิด Serial Monitor กด <code>⌘⇧P</code> บน macOS หรือ <code>Ctrl+Shift+P</code> บน Windows แล้วเลือก <code>Upload LittleFS to Pico/ESP8266/ESP32</code></p></div>
+        </div>
+        <div class="callout"><strong>ก่อนกด Upload:</strong> ต้องเลือก Board, Port และ <code>Minimal SPIFFS (1.9MB APP / 190KB SPIFFS)</code> ให้ตรงกับ CryptoClock และคำสั่งนี้จะเขียนทับค่าที่มีอยู่ใน LittleFS</div>
+      </section>
+
       <section id="software">
         <p class="eyebrow">07 · Software</p><h2>ซอฟต์แวร์และไลบรารี</h2>
         <div class="grid grid-2">
@@ -282,15 +293,6 @@
           <div class="card"><div class="number">6</div><h3>HTTPClient + SD</h3><p>มาพร้อม ESP32 core ใช้เรียก HTTPS API และอ่านไฟล์จาก SD Card</p></div>
         </div>
         <img class="lesson-photo" src="assets/lesson-photos/01-library-manager.png" alt="Arduino IDE และ Board Manager สำหรับติดตั้ง ESP32">
-        <h3 style="margin-top:30px">ติดตั้งปุ่ม Upload LittleFS Data ใน Arduino IDE 2.x</h3>
-        <p class="section-intro">ใช้เมื่อต้องการเขียนไฟล์ในโฟลเดอร์ <code>data/</code> เช่น <code>config.json</code>, <code>wifi.json</code>, <code>coin.json</code> และ <code>profile.json</code> ลง LittleFS ของ ESP32 ใหม่ทั้งชุด</p>
-        <div class="steps">
-          <div class="step-card"><h3>ดาวน์โหลด LittleFS uploader</h3><p>เปิดหน้า <a href="https://github.com/earlephilhower/arduino-littlefs-upload/releases" target="_blank" rel="noopener">arduino-littlefs-upload Releases</a> แล้วดาวน์โหลดไฟล์นามสกุล <code>.vsix</code></p></div>
-          <div class="step-card"><h3>ติดตั้ง extension</h3><p><strong>macOS:</strong> สร้างโฟลเดอร์ <code>~/.arduinoIDE/plugins/</code> แล้ววางไฟล์ <code>.vsix</code> ไว้ในนั้น<br><strong>Windows:</strong> วางไฟล์ <code>.vsix</code> ใน <code>C:\Users\ชื่อผู้ใช้\.arduinoIDE\plugins\</code></p></div>
-          <div class="step-card"><h3>เปิด Arduino IDE ใหม่</h3><p>ปิดและเปิด Arduino IDE เพื่อให้ extension ทำงาน แล้วเปิด <code>CryptoClock_Learning.ino</code> เลือก Board, Port และ Partition Scheme ให้ตรงกับบอร์ด</p></div>
-          <div class="step-card"><h3>Upload ข้อมูล LittleFS</h3><p>ปิด Serial Monitor ก่อน จากนั้นกด <code>⌘⇧P</code> บน macOS หรือ <code>Ctrl+Shift+P</code> บน Windows แล้วเลือก <code>Upload LittleFS to Pico/ESP8266/ESP32</code> ปลั๊กอินจะสร้าง image จากโฟลเดอร์ <code>data/</code> และเขียนเฉพาะ LittleFS โดยไม่ทับ firmware หรือ MicroSD</p></div>
-        </div>
-        <div class="callout"><strong>สำคัญ:</strong> การ Upload LittleFS จะเขียนทับค่าตั้งค่าบนบอร์ดเดิมทั้งหมด เช่น Wi-Fi, เหรียญ, Profile และเวลาแสดงผล จึงควรเก็บไฟล์ <code>data/</code> ที่ต้องการไว้ก่อนทำรายการ</div>
       </section>
 
       <section id="architecture">
