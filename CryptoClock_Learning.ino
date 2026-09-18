@@ -357,6 +357,7 @@ void setup() {
   pinMode(TFT_BACKLIGHT_PIN, OUTPUT);
   digitalWrite(TFT_BACKLIGHT_PIN, HIGH);
   tft.init();
+  tft.setSwapBytes(true);  // ให้ลำดับสีของ JPEG ตรงกับ Asset จาก V414_CDC
   tft.setRotation(1);
   tft.fillScreen(TFT_BLACK);
 

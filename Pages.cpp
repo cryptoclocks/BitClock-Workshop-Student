@@ -12,10 +12,47 @@ static void centerText(TFT_eSPI& screen, const String& text, int y, int font, ui
 }
 
 static String formatPrice(float value) {
-  if (value >= 1000000) return String(value / 1000000.0f, 2) + "M";
-  if (value >= 1000) return String(value, 0);
+  if (value >= 100000) return String(value, 0);
+  if (value >= 10000) return String(value, 1);
+  if (value >= 1000) return String(value, 2);
   if (value >= 10) return String(value, 2);
   return String(value, 4);
+}
+
+static String formatWithComma(String value) {
+  int decimal = value.indexOf('.');
+  int integerEnd = decimal < 0 ? value.length() : decimal;
+  String formatted;
+  int digits = 0;
+  for (int i = integerEnd - 1; i >= 0; i--) {
+    if (digits > 0 && digits % 3 == 0) formatted = "," + formatted;
+    formatted = value[i] + formatted;
+    digits++;
+  }
+  if (decimal >= 0) formatted += value.substring(decimal);
+  return formatted;
+}
+
+static void maskProfileToCircle(TFT_eSPI& screen) {
+  const int centerX = 60;
+  const int centerY = 60;
+  const int radius = 50;
+  for (int x = centerX - radius; x <= centerX + radius; x++) {
+    for (int y = centerY - radius; y <= centerY + radius; y++) {
+      int dx = x - centerX;
+      int dy = y - centerY;
+      if (dx * dx + dy * dy > radius * radius - 100) screen.drawPixel(x, y, TFT_BLACK);
+    }
+  }
+}
+
+static void drawCoinMark(TFT_eSPI& screen, const Coin& coin, int centerX, int centerY) {
+  screen.fillCircle(centerX, centerY, 24, coin.color);
+  screen.drawCircle(centerX, centerY, 24, TFT_WHITE);
+  screen.setTextDatum(MC_DATUM);
+  screen.setTextColor(TFT_BLACK, coin.color);
+  screen.drawString(String(coin.symbol).substring(0, 1), centerX, centerY, 4);
+  screen.setTextDatum(TL_DATUM);
 }
 
 void showWifiSetupPage(TFT_eSPI& screen, const String& apName) {
@@ -35,59 +72,77 @@ void showWifiConnectedPage(TFT_eSPI& screen, const String& ipAddress) {
 }
 
 void showProfilePage(TFT_eSPI& screen, bool sdReady) {
-  uint16_t background = screen.color565(13, 31, 52);
-  screen.fillScreen(background);
-  bool imageDrawn = sdReady && drawSdJpeg(screen, PROFILE_IMAGE, 12, 18);
+  screen.fillScreen(TFT_BLACK);
+  bool imageDrawn = sdReady && drawSdJpeg(screen, PROFILE_IMAGE, 10, 10);
   if (!imageDrawn) {
-    screen.fillCircle(60, 66, 44, screen.color565(41, 74, 107));
+    screen.fillCircle(60, 60, 50, screen.color565(247, 147, 26));
     screen.setTextDatum(MC_DATUM);
-    screen.setTextColor(TFT_CYAN, screen.color565(41, 74, 107));
-    screen.drawString("CC", 60, 66, 4);
+    screen.setTextColor(TFT_BLACK, screen.color565(247, 147, 26));
+    screen.drawString("CC", 60, 60, 4);
+  } else {
+    maskProfileToCircle(screen);
   }
 
   screen.setTextDatum(TL_DATUM);
-  screen.setTextColor(TFT_WHITE, background);
-  screen.drawString(PROFILE_MOTTO, 120, 22, 2);
-  screen.setTextColor(TFT_CYAN, background);
-  screen.drawString(PROFILE_NAME, 120, 58, 4);
-  screen.setTextColor(TFT_WHITE, background);
-  screen.drawString(PROFILE_ROLE, 120, 98, 2);
-  screen.drawFastHLine(16, 138, 288, screen.color565(55, 87, 118));
-  screen.setTextColor(screen.color565(188, 205, 225), background);
-  screen.drawString(PROFILE_COMPANY, 16, 162, 4);
+  size_t mottoLength = strlen(PROFILE_MOTTO);
+  int mottoFont = mottoLength <= 13 ? 3 : 2;
+  int mottoWidth = screen.textWidth(PROFILE_MOTTO, mottoFont);
+  screen.setTextColor(screen.color565(255, 174, 0), TFT_BLACK);
+  screen.drawString(PROFILE_MOTTO, 107 + (208 - mottoWidth) / 2, 15, mottoFont);
+  screen.setTextColor(screen.color565(255, 174, 0), TFT_BLACK);
+  screen.drawString(PROFILE_NAME, 10, 140, 2);
+  screen.setTextColor(TFT_WHITE, TFT_BLACK);
+  screen.drawString(PROFILE_ROLE, 10, 175, 2);
+  screen.drawString(PROFILE_COMPANY, 10, 205, 2);
 
   struct tm timeInfo;
   if (getLocalTime(&timeInfo, 50)) {
-    char timeText[24];
-    strftime(timeText, sizeof(timeText), "%H:%M  %d/%m/%Y", &timeInfo);
-    screen.drawString(timeText, 16, 210, 2);
+    char timeText[10];
+    char dateText[16];
+    strftime(timeText, sizeof(timeText), "%H:%M", &timeInfo);
+    strftime(dateText, sizeof(dateText), "%d/%m/%Y", &timeInfo);
+    screen.setTextColor(TFT_WHITE, TFT_BLACK);
+    screen.drawString(timeText, 152, 60, 5);
+    screen.drawString(dateText, 165, 110, 2);
   }
 }
 
 void showCoinPage(TFT_eSPI& screen, const Coin& coin, size_t coinIndex) {
   screen.fillScreen(TFT_BLACK);
-  screen.drawRoundRect(10, 8, screen.width() - 20, screen.height() - 16, 13, coin.color);
+  const int boxWidth = 95;
+  const int boxHeight = 48;
+  screen.drawRoundRect(20, 14, boxWidth, boxHeight, 6, coin.color);
+  screen.drawRoundRect(205, 14, boxWidth, boxHeight, 6, coin.color);
   screen.setTextDatum(TL_DATUM);
-  screen.setTextColor(coin.color, TFT_BLACK);
-  screen.drawString(coin.symbol, 22, 20, 4);
   screen.setTextColor(TFT_WHITE, TFT_BLACK);
-  screen.drawString("THB", 250, 24, 2);
-  centerText(screen, coin.name, 65, 2, TFT_LIGHTGREY);
+  int coinTextX = 67 - screen.textWidth(coin.symbol, 2) / 2;
+  screen.drawString(coin.symbol, coinTextX, 30, 2);
+  screen.setTextColor(TFT_WHITE, TFT_BLACK);
+  screen.drawString("THB", 252 - screen.textWidth("THB", 2) / 2, 30, 2);
+  drawCoinMark(screen, coin, 160, 34);
 
   if (!coin.hasData) {
-    centerText(screen, "Waiting for Bitkub API", 128, 2, TFT_YELLOW);
-    centerText(screen, "Check Wi-Fi connection", 160, 2, TFT_LIGHTGREY);
+    centerText(screen, "Waiting for Bitkub API", 125, 2, TFT_YELLOW);
+    centerText(screen, "Check Wi-Fi connection", 153, 2, TFT_LIGHTGREY);
   } else {
-    centerText(screen, formatPrice(coin.lastPrice) + " THB", 120, 6, TFT_WHITE);
+    String price = formatWithComma(formatPrice(coin.lastPrice));
+    int priceFont = price.length() > 9 ? 4 : 5;
+    centerText(screen, price, price.length() > 9 ? 125 : 115, priceFont, coin.color);
     uint16_t changeColor = coin.changePercent >= 0 ? TFT_GREEN : TFT_RED;
     String change = String(coin.changePercent >= 0 ? "+" : "") + String(coin.changePercent, 2) + "%";
-    centerText(screen, change, 161, 4, changeColor);
-    screen.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-    screen.drawString("LOW  " + formatPrice(coin.low24h), 23, 199, 2);
-    screen.drawRightString("HIGH  " + formatPrice(coin.high24h), 297, 199, 2);
+    screen.setTextColor(changeColor, TFT_BLACK);
+    screen.drawString(change, 310 - screen.textWidth(change, 1), 85, 1);
+    screen.setTextColor(TFT_GREEN, TFT_BLACK);
+    screen.drawString("Lowest", 30, 180, 2);
+    screen.setTextColor(TFT_RED, TFT_BLACK);
+    screen.drawString("Highest", 223, 180, 2);
+    screen.setTextColor(TFT_WHITE, TFT_BLACK);
+    String low = formatWithComma(formatPrice(coin.low24h));
+    String high = formatWithComma(formatPrice(coin.high24h));
+    screen.drawString(low, 60 - screen.textWidth(low, 2) / 2, 200, 2);
+    screen.drawString(high, 255 - screen.textWidth(high, 2) / 2, 200, 2);
   }
-
-  centerText(screen, "BITKUB  " + String(coinIndex + 1) + "/" + String(COIN_COUNT), 226, 1, TFT_DARKGREY);
+  centerText(screen, "BITKUB  " + String(coinIndex + 1) + "/" + String(COIN_COUNT), 232, 1, TFT_DARKGREY);
 }
 
 static int priceToY(float value, float minValue, float range, int top, int height) {
@@ -99,9 +154,7 @@ void showCdcPage(TFT_eSPI& screen, const CdcData& data) {
   screen.fillScreen(TFT_BLACK);
   screen.setTextDatum(TL_DATUM);
   screen.setTextColor(TFT_WHITE, TFT_BLACK);
-  screen.drawString("CDC Action Zone", 10, 8, 4);
-  screen.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-  screen.drawString("BTC/THB  4H  EMA 12/26", 11, 39, 2);
+  screen.drawString("CDC ActionZone 3.0", 8, 7, 2);
 
   if (!data.hasData || data.count == 0) {
     centerText(screen, "CDC data unavailable", 112, 2, TFT_RED);
@@ -110,15 +163,25 @@ void showCdcPage(TFT_eSPI& screen, const CdcData& data) {
   }
 
   uint16_t zoneColor = data.buyZone ? TFT_GREEN : TFT_RED;
-  screen.fillRoundRect(244, 7, 66, 45, 9, zoneColor);
+  screen.fillRoundRect(238, 0, 82, 82, 8, zoneColor);
   screen.setTextDatum(MC_DATUM);
   screen.setTextColor(data.buyZone ? TFT_BLACK : TFT_WHITE, zoneColor);
-  screen.drawString(data.buyZone ? "BUY" : "SELL", 277, 30, 4);
+  screen.drawString(data.buyZone ? "BUY" : "SELL", 279, 41, 4);
+  screen.setTextDatum(TL_DATUM);
+  screen.drawRoundRect(259, 81, 40, 18, 4, TFT_WHITE);
+  screen.setTextColor(TFT_WHITE, TFT_BLACK);
+  screen.drawString("4H", 272, 86, 1);
+  Coin btc = {"BTC", "BTC_THB", "Bitcoin", 0, 0, 0, 0, screen.color565(247, 147, 26), false};
+  drawCoinMark(screen, btc, 34, 58);
+  String latestPrice = formatWithComma(formatPrice(data.candles[data.count - 1].close));
+  int priceFont = latestPrice.length() > 9 ? 2 : 3;
+  screen.setTextColor(screen.color565(247, 147, 26), TFT_BLACK);
+  screen.drawString(latestPrice, 68, priceFont == 3 ? 47 : 51, priceFont);
 
   const int chartX = 10;
-  const int chartY = 68;
+  const int chartY = 106;
   const int chartWidth = 300;
-  const int chartHeight = 158;
+  const int chartHeight = 126;
   float minValue = data.candles[0].low;
   float maxValue = data.candles[0].high;
   for (size_t i = 1; i < data.count; i++) {
@@ -156,6 +219,9 @@ void showCdcPage(TFT_eSPI& screen, const CdcData& data) {
       screen.drawLine(previousX, previousSlowY, currentX, currentSlowY, TFT_MAGENTA);
     }
   }
+  screen.setTextColor(TFT_DARKGREY, TFT_BLACK);
+  screen.drawString("Max: " + String(maxValue, 2), chartX, chartY - 8, 1);
+  screen.drawString("Min: " + String(minValue, 2), chartX, chartY + chartHeight - 5, 1);
   screen.setTextDatum(TL_DATUM);
 }
 
