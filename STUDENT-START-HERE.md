@@ -12,12 +12,22 @@
 6. เลือกพอร์ต USB ของบอร์ด และตั้ง **Upload Speed: 460800** กับ **Partition Scheme: Minimal SPIFFS (1.9MB APP / 190KB SPIFFS)**
 7. กด Verify ก่อน แล้วจึง Upload
 
+## Upload โฟลเดอร์ `data/` เข้า LittleFS
+
+1. ดาวน์โหลดไฟล์ `.vsix` จาก [arduino-littlefs-upload Releases](https://github.com/earlephilhower/arduino-littlefs-upload/releases)
+2. วางไฟล์ไว้ที่ `~/.arduinoIDE/plugins/` บน macOS หรือ `C:\Users\ชื่อผู้ใช้\.arduinoIDE\plugins\` บน Windows แล้วเปิด Arduino IDE ใหม่
+3. ปิด Serial Monitor และตรวจว่า Board, Port และ Partition Scheme ยังเลือกถูกต้อง
+4. กด `⌘⇧P` บน macOS หรือ `Ctrl+Shift+P` บน Windows แล้วเลือก `Upload LittleFS to Pico/ESP8266/ESP32`
+
+คำสั่งนี้ใช้ข้อมูลในโฟลเดอร์ `data/` สร้าง LittleFS image แล้วเขียนลงบอร์ด โดยไม่แตะ firmware หรือ MicroSD แต่จะเขียนทับการตั้งค่าใน LittleFS เดิม
+
 สำหรับแบบฝึกเริ่มต้น ให้เปิด `HelloWiFi_Starter/HelloWiFi_Starter.ino` ได้เลย โดยใช้ Board และ Port เดียวกัน โค้ดตัวอย่างตั้งค่า `tft.setSwapBytes(true)` ไว้แล้วให้ตรงกับจอ ESP32-2432S028R
 
 ## ไฟล์ในแพ็กเกจ
 
 - `CryptoClock_Learning.ino` — โค้ดหลักของ CryptoClock
 - `HelloWiFi_Starter/` — แบบฝึกเริ่มต้น ต่อ Wi-Fi แล้วพิมพ์ข้อความกลางจอ
+- `data/` — ชุดค่าเริ่มต้นปลอดภัยสำหรับ Upload เข้า LittleFS ไม่มีรหัส Wi-Fi หรือข้อมูลส่วนตัว
 - `sd/` — ไฟล์ระบบและรูปตัวอย่างสำหรับ MicroSD Card
 - `Teaching_Website/index.html` — เว็บไซต์บทเรียน แยกจากโค้ดเฟิร์มแวร์ เปิดด้วยเบราว์เซอร์ได้โดยไม่ต้องติดตั้งเพิ่ม
 - `bundled-libraries/` — ไลบรารีที่ตัวติดตั้งคัดลอกให้ Arduino IDE

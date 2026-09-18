@@ -1,0 +1,22 @@
+{
+  "firmwareVersion": "4.1.4",
+  "deviceId": "CCN000000",
+  "plan": "free",
+  "brightnessLevel": 100,
+  "updateInterval": 10,
+  "timeout": 0,
+  "pageIndex": 1,
+  "coinIndex": 0,
+  "currencyIndex": 0,
+  "pageMode": "dynamic",
+  "region": "default",
+  "timeZone": "Asia/Bangkok",
+  "currency1": "USDT",
+  "currency2": "THB",
+  "pageDuration": { "profile": "15", "coin": "15", "screensaver": "15", "cdc": "15" },
+  "pageToggle": { "profile": true, "coin": true, "screensaver": false, "cdc": false },
+  "settings": { "alert": false, "game": false, "horo": false, "plan": "free", "coins": 4 },
+  "lotteryAlert": false,
+  "lineAlert": false,
+  "soundAlert": false
+}

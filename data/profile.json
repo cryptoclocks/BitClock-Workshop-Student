@@ -1,0 +1,21 @@
+{
+  "profile": {
+    "firstname": "Satoshi",
+    "lastname": "Nakamoto",
+    "nickname": "Sat",
+    "position": "Founder",
+    "company": "Bitcoin",
+    "motto": "We are all Satoshi."
+  },
+  "colors": {
+    "background": "#000000",
+    "name": "#FFAE00",
+    "detail": "#FFFFFF",
+    "motto": "#FFAE00",
+    "datetime": "#FFFFFF"
+  },
+  "refer": "CCN000000",
+  "referring": [],
+  "contact": { "line": "0", "whatsapp": "0", "tel": "0", "email": "" },
+  "social": { "facebook": "", "instagram": "", "youtube": "", "tiktok": "" }
+}

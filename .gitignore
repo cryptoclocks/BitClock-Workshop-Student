@@ -7,7 +7,8 @@ build/
 *.elf
 *.bin
 *.map
-data/
+bundled-libraries/**/data/
+sd/**/data/
 private-backup/
 previous-learning/
 sd/4.1.4/System/website/api_config.json

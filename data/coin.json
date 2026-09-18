@@ -1,0 +1,8 @@
+{
+  "coins": [
+    { "name": "BTC", "type": 3, "color": "#FFD700", "market": "" },
+    { "name": "KUB", "type": 2, "color": "#00FF00", "market": "" },
+    { "name": "BNB", "type": 3, "color": "#F3BA2F", "market": "" },
+    { "name": "DOGE", "type": 3, "color": "#C2A633", "market": "" }
+  ]
+}
