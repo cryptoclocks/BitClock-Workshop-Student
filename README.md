@@ -17,7 +17,7 @@ arduino-cli upload --fqbn 'esp32:esp32:esp32:PartitionScheme=min_spiffs,UploadSp
 
 The `sd/` directory is an image of the original microSD contents. Copy its **contents**, including `4.1.4/`, to the root of a FAT32 microSD card. LittleFS settings are created on first boot if missing; `data/` is a local backup of the original project's filesystem data and is deliberately excluded from Git because it can contain device and Wi-Fi credentials. When no device ID exists, the firmware creates a stable `CCN...` ID from the ESP32 MAC address.
 
-The local teaching site documents the workshop flow and is kept aligned with this firmware.
+เว็บไซต์บทเรียนอยู่ที่ `Teaching_Website/index.html` แยกจากโค้ดเฟิร์มแวร์อย่างชัดเจน และเปิดด้วยเบราว์เซอร์ได้โดยไม่ต้องติดตั้งเพิ่ม
 # CryptoClock Learning Workshop
 
 เริ่มต้นที่ [STUDENT-START-HERE.md](STUDENT-START-HERE.md) — ไลบรารีทั้งหมดที่สเก็ตช์ต้องใช้รวมอยู่ในแพ็กเกจแล้ว

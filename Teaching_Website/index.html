@@ -191,7 +191,7 @@
     <aside>
       <nav class="toc" aria-label="สารบัญ">
         <p class="toc-title">สารบัญบทเรียน</p>
-        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#download">ดาวน์โหลดและติดตั้ง</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#code-viewer">ดูโค้ดทั้งหมด</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
+        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#download">ดาวน์โหลดและติดตั้ง</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ดและไฟล์</a><a href="#code-viewer">ดูโค้ดทั้งหมด</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
       </nav>
     </aside>
 
@@ -361,53 +361,29 @@ EMA 12 ≤ EMA 26  → SELL zone</code></pre>
       </section>
 
       <section id="code-explained">
-        <p class="eyebrow">11 · Code guide</p><h2>อธิบายโค้ดแต่ละส่วน</h2>
+        <p class="eyebrow">11 · Code guide</p><h2>อธิบายโค้ดและไฟล์สำคัญ</h2>
         <p class="section-intro">ให้เริ่มอ่านจากหน้าที่ของแต่ละไฟล์ก่อน ไม่จำเป็นต้องเข้าใจทุกบรรทัดในครั้งแรก</p>
         <details><summary><code>CryptoClock_Learning.ino</code> · ศูนย์กลางของโปรแกรม</summary><p>เริ่มจอ TFT, SD Card และ Wi-Fi จากนั้นเปิด Local Settings, เรียกข้อมูลราคา และสั่งให้หน้าจอวนตามลำดับที่กำหนด</p></details>
         <details><summary><code>GlobalParameter.h / .cpp</code> · ค่ากลางของระบบ</summary><p>รวมตัวแปรร่วม เช่น Pin, รายชื่อเหรียญ, API, สกุลเงิน, เวลา และสถานะหน้าจอ</p></details>
         <details><summary><code>GlobalFunction.cpp</code> · ฟังก์ชันหลัก</summary><p>เชื่อมต่อ API, อ่าน JSON, แปลงราคา, อัปเดตค่าที่แสดงบนจอ และควบคุมงานดึงข้อมูลราคา</p></details>
+        <details><summary><code>GlobalModule.h</code> · จุดรวมของส่วนที่ใช้ร่วมกัน</summary><p>รวมไลบรารีและอ็อบเจกต์กลางที่หลายไฟล์ใช้ร่วมกัน เช่น จอ TFT, SD Card, Web Server และระบบพื้นฐานของ ESP32</p></details>
         <details><summary><code>page1.cpp / page2.cpp / page26.cpp</code> · หน้าจอหลัก</summary><p>กำหนดพิกัดและวาดหน้า Profile, ราคาเหรียญ และ CDC Action Zone บนจอ 320×240</p></details>
         <details><summary><code>JpgSupport.cpp / cc_sd.cpp</code> · รูปภาพและ SD Card</summary><p>เริ่มต้น SD Card เปิดไฟล์ภาพ และถอดรหัส JPEG เพื่อส่งภาพ Profile และ Slide ไปยังจอ TFT</p></details>
         <details><summary><code>HTTPClient และ WiFiClientSecure</code> · เรียก HTTPS API</summary><p>โค้ดใช้ <code>HTTPClient</code> เปิดคำขอ HTTPS แล้วอ่าน JSON จากแหล่งข้อมูลราคา ส่วน <code>WiFiClientSecure</code> เป็นตัวจัดการการเชื่อมต่อแบบเข้ารหัส</p><p><strong>ทำไมในโค้ดจึงมี <code>client.setInsecure()</code>?</strong> ตัวอย่างเรียนใช้คำสั่งนี้เพื่อให้ ESP32 เรียก HTTPS ได้ง่ายโดยไม่ต้องติดตั้ง Root CA certificate แต่ในการใช้งานจริงควรตรวจสอบใบรับรอง TLS ด้วย Root CA ที่ถูกต้อง เพื่อป้องกันการเชื่อมต่อกับปลายทางปลอม</p></details>
         <details><summary><code>cc_littlefs.cpp</code> · เก็บค่าตั้งค่าในเครื่อง</summary><p>อ่านและบันทึก Wi-Fi, Device ID, รายชื่อเหรียญ, โปรไฟล์ และค่าหน้าจอใน LittleFS โดย Device ID ใหม่จะสร้างจาก MAC Address ในรูปแบบ <code>CCN...</code></p></details>
         <details><summary><code>page26.cpp</code> · CDC Action Zone</summary><p>เรียกข้อมูลแท่งเทียนจาก Binance Klines แล้วคำนวณ EMA 12 และ EMA 26 เพื่อแสดง BUY/SELL zone เป็นข้อมูลประกอบการเรียนรู้</p></details>
         <div class="callout"><strong>ขอบเขตของโค้ดล่าสุด:</strong> เวอร์ชัน Workshop นี้เน้น ESP32, Local Web Settings, API ราคา, LittleFS, SD Card และจอ TFT</div>
-      </section>
-
-      <section id="files">
-        <p class="eyebrow">12 · Code tour</p><h2>รู้จักไฟล์สำคัญของโปรเจกต์</h2>
         <div class="code-tour">
           <div class="file"><code>CryptoClock_Learning.ino</code><p>จุดเริ่มระบบ มี state ของ 4 หน้าหลัก, timer, การรีเฟรชราคา, Local Web Settings และการกลับมาเชื่อม Wi-Fi</p></div>
           <div class="file"><code>GlobalModule.h</code><p>รวมไลบรารีและอ็อบเจกต์กลางที่หลายไฟล์ใช้ร่วมกัน เช่น จอ TFT, SD และระบบพื้นฐานของ ESP32</p></div>
           <div class="file"><code>GlobalParameter.h / .cpp</code><p>ตัวแปรร่วม เช่น รายชื่อเหรียญ ชนิด API สกุลเงิน เวลา และสถานะหน้าจอ</p></div>
           <div class="file"><code>GlobalFunction.cpp</code><p>เรียก API ราคา อ่าน JSON แปลงค่าเงิน และอัปเดตข้อมูลที่ใช้แสดงผล</p></div>
-          <div class="file"><code>page26.cpp</code><p>เรียก Binance Klines และคำนวณ EMA สำหรับ CDC Action Zone</p></div>
           <div class="file"><code>page1.cpp / page1.h</code><p>หน้า Profile แสดงข้อมูลโปรไฟล์และเวลา</p></div>
           <div class="file"><code>page2.cpp / page2.h</code><p>หน้าราคาเหรียญ แสดงโลโก้ ชื่อเหรียญ ราคา และข้อมูลสูงสุด/ต่ำสุด</p></div>
-          <div class="file"><code>page3.cpp / page3.h</code><p>หน้าข้อมูลและเมนูเสริมของระบบ</p></div>
-          <div class="file"><code>page6.cpp / page6.h</code><p>หน้าข้อมูลเสริมและการแสดงผลข้อมูลภายนอก</p></div>
-          <div class="file"><code>page7.cpp / page7.h</code><p>หน้าฟังก์ชันเสริมของเฟิร์มแวร์</p></div>
-          <div class="file"><code>page8.cpp / page8.h</code><p>หน้าภาพเคลื่อนไหวและเอฟเฟกต์การแสดงผล</p></div>
-          <div class="file"><code>page9.cpp / page9.h</code><p>หน้าเมนู Settings และเมนูย่อย</p></div>
-          <div class="file"><code>page10.cpp / page10.h</code><p>หน้าตั้งค่าระบบเพิ่มเติม</p></div>
-          <div class="file"><code>page11.cpp / page11.h</code><p>หน้าตั้งค่าและการแสดงข้อมูลเสริม</p></div>
-          <div class="file"><code>page12.cpp / page12.h</code><p>หน้าตั้งค่าการแจ้งเตือนและตัวเลือกของระบบ</p></div>
-          <div class="file"><code>page13.cpp / page13.h</code><p>หน้าเมนูฟังก์ชันเสริมของเฟิร์มแวร์</p></div>
-          <div class="file"><code>page14.cpp / page14.h</code><p>หน้าตั้งค่าและการเลือกโหมดการทำงาน</p></div>
-          <div class="file"><code>page15.cpp / page15.h</code><p>หน้าฟังก์ชันเสริมและข้อมูลการใช้งาน</p></div>
-          <div class="file"><code>page16.cpp / page16.h</code><p>หน้าการทำงานเสริมของระบบ</p></div>
-          <div class="file"><code>page17.cpp / page17.h</code><p>หน้าฟังก์ชันการชำระเงินและข้อมูลเสริม</p></div>
-          <div class="file"><code>page18.cpp / page18.h</code><p>หน้าเมนูเสริมและการนำทาง</p></div>
-          <div class="file"><code>page19.cpp / page19.h</code><p>หน้าข้อมูลและตัวเลือกเพิ่มเติม</p></div>
-          <div class="file"><code>page20.cpp / page20.h</code><p>หน้าฟังก์ชันเสริมของโปรเจกต์</p></div>
-          <div class="file"><code>page21.cpp / page21.h</code><p>หน้าข้อมูลและการตั้งค่าเพิ่มเติม</p></div>
-          <div class="file"><code>page22.cpp / page22.h</code><p>หน้าแสดงข้อมูล Point และ CDC</p></div>
-          <div class="file"><code>page23.cpp / page23.h</code><p>หน้าข้อมูลและการทำงานเสริม</p></div>
-          <div class="file"><code>page24.cpp / page24.h</code><p>หน้าทดสอบและข้อมูลระบบ</p></div>
-          <div class="file"><code>page25.cpp / page25.h</code><p>หน้าทดสอบการแสดงผล</p></div>
+          <div class="file"><code>page3.cpp / page6.cpp–page25.cpp</code><p>หน้าประกอบและเมนูภายในที่เฟิร์มแวร์เรียกใช้ตามสถานะของระบบ ผู้เรียนเริ่มจาก 4 หน้าหลักก่อน แล้วค่อยเปิดอ่านเมื่อทดลองปรับเมนูหรือ Touch</p></div>
           <div class="file"><code>page26.cpp / page26.h</code><p>หน้า CDC Action Zone ใช้ข้อมูล Binance Klines และคำนวณ EMA 12/26</p></div>
           <div class="file"><code>handle.cpp</code><p>จัดการ Touch, ปุ่ม, การเปลี่ยนหน้า และเหตุการณ์จากผู้ใช้</p></div>
-          <div class="file"><code>cc_littlefs.cpp</code><p>อ่านและบันทึก config, Wi-Fi, coin, profile, alert และ Device ID ใน LittleFS</p></div>
+          <div class="file"><code>cc_littlefs.cpp</code><p>อ่านและบันทึก config, Wi-Fi, coin, profile และ Device ID ใน LittleFS</p></div>
           <div class="file"><code>cc_sd.cpp / JpgSupport.cpp</code><p>เริ่มต้น SD Card, อ่านไฟล์ภาพ และส่ง JPEG ไปยังจอ TFT</p></div>
         </div>
         <pre><code>// หัวใจของลำดับ 4 หน้าหลัก
