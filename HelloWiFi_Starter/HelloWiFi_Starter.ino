@@ -20,6 +20,7 @@ constexpr uint8_t TOUCH_MOSI = 32;
 constexpr uint8_t TOUCH_MISO = 39;
 constexpr uint8_t TOUCH_CLK  = 25;
 constexpr uint8_t TOUCH_CS   = 33;
+constexpr uint8_t BOOT_BUTTON = 0;
 constexpr uint16_t TOUCH_THRESHOLD = 280;
 const char* DISPLAY_MODE_FILE = "/hello-display-mode.txt";
 
@@ -127,6 +128,8 @@ void connectWiFi() {
 
 void setup() {
   Serial.begin(115200);
+  pinMode(BOOT_BUTTON, INPUT_PULLUP);
+  const bool resetDisplayMode = (digitalRead(BOOT_BUTTON) == LOW);
 
   tft.begin();
   tft.setRotation(1);     // แนวนอน 320 x 240
@@ -137,6 +140,12 @@ void setup() {
     return;
   }
   touch.begin();
+
+  // Hold BOOT while switching the board on to show Black/White setup again.
+  if (resetDisplayMode) {
+    LittleFS.remove(DISPLAY_MODE_FILE);
+    Serial.println("Display mode reset: choose Black or White again");
+  }
 
   bool inversionOn = false;
   if (!loadDisplayMode(inversionOn)) {
