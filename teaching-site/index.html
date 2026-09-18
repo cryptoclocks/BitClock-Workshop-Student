@@ -103,6 +103,11 @@
     pre code { padding:0; color:inherit; background:transparent; }
     .callout { margin-top:20px; padding:19px 22px; border-left:5px solid var(--orange); border-radius:12px; background:#fff7e8; }
     .callout strong { color:#8a5911; }
+    .download-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:22px; }
+    .download-link { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:11px 18px; border-radius:12px; color:#fff; background:var(--blue); font-weight:800; text-decoration:none; box-shadow:0 8px 18px rgba(65,105,225,.2); }
+    .download-link:hover { background:#3158c9; }
+    .download-link.secondary { color:var(--blue); background:#eaf0ff; box-shadow:none; }
+    .download-link.secondary:hover { background:#dce6ff; }
     .steps { counter-reset:step; display:grid; gap:16px; }
     .step-card { position:relative; padding:23px 24px 23px 76px; border:1px solid var(--line); border-radius:var(--radius); background:#fff; }
     .step-card::before { counter-increment:step; content:counter(step); position:absolute; top:22px; left:22px; display:grid; place-items:center; width:38px; height:38px; color:#fff; background:var(--blue); border-radius:12px; font-weight:900; }
@@ -186,7 +191,7 @@
     <aside>
       <nav class="toc" aria-label="สารบัญ">
         <p class="toc-title">สารบัญบทเรียน</p>
-        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#code-viewer">ดูโค้ดทั้งหมด</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
+        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#download">ดาวน์โหลดและติดตั้ง</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#code-viewer">ดูโค้ดทั้งหมด</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
       </nav>
     </aside>
 
@@ -209,12 +214,12 @@
       <section id="objectives">
         <p class="eyebrow">03 · Learning objectives</p><h2>วัตถุประสงค์การเรียนรู้</h2>
         <p class="section-intro">หลังจบเวิร์กชอป ผู้เรียนควรสามารถอธิบายและทดลองแก้โค้ดได้ด้วยตนเอง ไม่จำเป็นต้องจำทุกคำสั่ง</p>
-        <div class="card"><ul class="check-list"><li>อธิบายหน้าที่ของ <code>setup()</code> และ <code>loop()</code> ได้</li><li>เชื่อม ESP32 เข้ากับ Wi-Fi ผ่าน WiFiManager ได้</li><li>ดึงและอ่าน JSON จาก Bitkub Public API ได้</li><li>อธิบาย EMA 12/26 และสถานะ BUY/SELL zone ได้</li><li>เตรียมรูป Profile และ Slide บน SD Card ได้</li><li>อธิบายการวน 4 หน้าหลักด้วย <code>millis()</code> ได้</li></ul></div>
+        <div class="card"><ul class="check-list"><li>อธิบายหน้าที่ของ <code>setup()</code> และ <code>loop()</code> ได้</li><li>เชื่อม ESP32 เข้ากับ Wi-Fi ผ่านหน้า Local Setup ของบอร์ดได้</li><li>ดึงและอ่าน JSON จาก Bitkub Public API ได้</li><li>อธิบาย EMA 12/26 และสถานะ BUY/SELL zone ได้</li><li>เตรียมรูป Profile และ Slide บน SD Card ได้</li><li>อธิบายการวน 4 หน้าหลักด้วย <code>millis()</code> ได้</li></ul></div>
       </section>
 
       <section id="features">
         <p class="eyebrow">04 · Features</p><h2>ฟีเจอร์หลัก</h2>
-        <div class="card"><ul class="check-list"><li>เชื่อมต่อ Wi-Fi ได้สะดวกผ่าน WiFiManager</li><li>ตั้งค่าผ่าน Local Web Settings จาก IP ของบอร์ด</li><li>เลือกเหรียญแสดงผลได้ 4 ช่องจากคู่ THB ของ Bitkub</li><li>เปิด/ปิดหน้าและกำหนดเวลาแสดงแต่ละหน้า</li><li>อัปโหลด Profile และ SD Slide เป็น JPEG</li><li>CDC Action Zone ของ BTC/THB 4H พร้อม EMA 12/26 และกราฟแท่ง</li></ul></div>
+        <div class="card"><ul class="check-list"><li>เชื่อมต่อ Wi-Fi ผ่าน Local Setup ของบอร์ด</li><li>ตั้งค่าผ่าน Local Web Settings จาก IP ของบอร์ด</li><li>เลือกเหรียญแสดงผลได้ 4 ช่องจากคู่ THB ของ Bitkub</li><li>เปิด/ปิดหน้าและกำหนดเวลาแสดงแต่ละหน้า</li><li>อัปโหลด Profile และ SD Slide เป็น JPEG</li><li>CDC Action Zone ของ BTC/THB 4H พร้อม EMA 12/26 และกราฟแท่ง</li></ul></div>
         <div class="callout"><strong>แหล่งข้อมูล:</strong> ราคาใช้ Bitkub Ticker V3 และ CDC ใช้ TradingView History ซึ่งเป็น Public API ไม่ต้องใช้ API key ดูรูปแบบข้อมูลได้จาก <a href="https://api.bitkub.com/docs/endpoint/api/v3/market/ticker?method=GET">Ticker</a> และ <a href="https://api.bitkub.com/docs/endpoint/tradingview/history?method=GET">History</a> ของ Bitkub</div>
       </section>
 
@@ -233,7 +238,7 @@
           <tr><td>สาย USB-A → USB-C Data</td><td>1</td><td>จ่ายไฟ 5V และอัปโหลดโปรแกรม ต้องเป็นสายที่ส่งข้อมูลได้ ไม่ใช่สายชาร์จอย่างเดียว</td><td><span class="required">จำเป็น</span></td></tr>
           <tr><td>เฟรมอะคริลิก 2.8 นิ้ว</td><td>1 ชุด</td><td>ยึดและป้องกันบอร์ด ต้องระบุว่ารองรับ ESP32-2432S028R</td><td><span class="required">จำเป็น</span></td></tr>
           <tr><td>คอมพิวเตอร์</td><td>1</td><td>ใช้ Arduino IDE และเชื่อมต่อบอร์ด</td><td><span class="required">จำเป็น</span></td></tr>
-          <tr><td>Wi-Fi 2.4 GHz</td><td>1 เครือข่าย</td><td>ใช้ทดสอบ WiFiManager; ESP32 ส่วนใหญ่ไม่รองรับ 5 GHz</td><td><span class="required">จำเป็น</span></td></tr>
+          <tr><td>Wi-Fi 2.4 GHz</td><td>1 เครือข่าย</td><td>ใช้ตั้งค่าและทดสอบดึงข้อมูล; ESP32 ส่วนใหญ่ไม่รองรับ 5 GHz</td><td><span class="required">จำเป็น</span></td></tr>
           <tr><td>MicroSD แบบ FAT32</td><td>1</td><td>เก็บ profile.jpg และภาพสไลด์ขนาด 320×240 ในช่อง TF บนบอร์ด</td><td><span class="required">จำเป็น</span></td></tr>
         </tbody></table></div>
         <h3 style="margin-top:30px">ภาพอุปกรณ์และส่วนประกอบ</h3>
@@ -246,6 +251,16 @@
         <div class="callout"><strong>Pin ที่โค้ดตั้งไว้:</strong> TFT ใช้ MISO 12, MOSI 13, SCLK 14, CS 15, DC 2 และ Backlight 21 ส่วน MicroSD ใช้ SCLK 18, MISO 19, MOSI 23 และ CS 5</div>
       </section>
 
+      <section id="download">
+        <p class="eyebrow">07 · Download</p><h2>ดาวน์โหลดและติดตั้งสำหรับ Workshop</h2>
+        <p class="section-intro">ไฟล์ ZIP เดียวรวมโค้ด CryptoClock, เว็บไซต์บทเรียน, ตัวอย่าง SD Card และไลบรารีที่จำเป็นไว้แล้ว</p>
+        <div class="download-actions">
+          <a class="download-link" href="https://github.com/cryptoclocks/BitClock-Workshop-Student/archive/refs/heads/main.zip">ดาวน์โหลดชุด Workshop (.zip)</a>
+          <a class="download-link secondary" href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">ดาวน์โหลด Arduino IDE 2.x</a>
+        </div>
+        <div class="callout"><strong>รองรับทั้ง macOS และ Windows 10/11:</strong> แตกไฟล์ ZIP ก่อน แล้วเปิด <code>Install_Libraries.command</code> บน macOS หรือ <code>Install_Libraries.bat</code> บน Windows เพื่อติดตั้งไลบรารีที่รวมมาอัตโนมัติ จากนั้นติดตั้ง <strong>esp32 by Espressif Systems 2.0.17</strong> ผ่าน Boards Manager เพียงครั้งเดียวต่อเครื่อง</div>
+      </section>
+
       <section id="software">
         <p class="eyebrow">07 · Software</p><h2>ซอฟต์แวร์และไลบรารี</h2>
         <div class="grid grid-2">
@@ -256,7 +271,7 @@
           <div class="card"><div class="number">5</div><h3>JPEGDecoder</h3><p>ถอดรหัสไฟล์ <code>profile.jpg</code> และ <code>slide1.jpg</code> จาก SD Card แล้วส่งพิกเซลไปยัง TFT_eSPI</p></div>
           <div class="card"><div class="number">6</div><h3>HTTPClient + SD</h3><p>มาพร้อม ESP32 core ใช้เรียก HTTPS API และอ่านไฟล์จาก SD Card</p></div>
         </div>
-        <img class="lesson-photo" src="assets/lesson-photos/01-library-manager.png" alt="Arduino IDE และ Library Manager สำหรับติดตั้งไลบรารี">
+        <img class="lesson-photo" src="assets/lesson-photos/01-library-manager.png" alt="Arduino IDE และ Board Manager สำหรับติดตั้ง ESP32">
       </section>
 
       <section id="architecture">
@@ -295,7 +310,7 @@ Profile → Coin: BTC → ETH → KUB → USDT → CDC Action Zone → SD Slides
         <p class="eyebrow">09 · Security basics · 20 Minutes</p><h2>ความปลอดภัยสำหรับ CryptoClock</h2>
         <p class="section-intro">CryptoClock ใช้ข้อมูลราคาแบบสาธารณะ แต่ยังต้องดูแล Wi‑Fi, หน้า Local Settings, SD Card และแหล่งจ่ายไฟอย่างถูกต้อง หัวข้อนี้ช่วยให้ผู้เรียนรู้ว่าอะไรควรทำตั้งแต่วันแรก</p>
         <div class="grid grid-2">
-          <div class="card"><h3>Wi‑Fi และ Local Settings</h3><ul class="check-list"><li>ตั้งรหัสผ่าน Wi‑Fi ที่คาดเดายาก และไม่แชร์กับผู้ที่ไม่เกี่ยวข้อง</li><li>เปิดหน้า Local Settings เฉพาะบน Wi‑Fi ที่เชื่อถือได้</li><li>ไม่เผยแพร่ IP ของบอร์ดหรือเปิด Port ไปยัง Internet</li><li>ตั้งค่าเสร็จแล้วให้ปิด Hotspot <code>CryptoClock-Setup</code> ด้วยการเชื่อมต่อ Wi‑Fi ปกติให้สำเร็จ</li></ul></div>
+          <div class="card"><h3>Wi‑Fi และ Local Settings</h3><ul class="check-list"><li>ตั้งรหัสผ่าน Wi‑Fi ที่คาดเดายาก และไม่แชร์กับผู้ที่ไม่เกี่ยวข้อง</li><li>เปิดหน้า Local Settings เฉพาะบน Wi‑Fi ที่เชื่อถือได้</li><li>ไม่เผยแพร่ IP ของบอร์ดหรือเปิด Port ไปยัง Internet</li><li>ตั้งค่าเสร็จแล้วให้เชื่อม Wi‑Fi ปกติให้สำเร็จ เพื่อไม่ต้องใช้ Local AP <code>CryptoClock</code> ต่อไป</li></ul></div>
           <div class="card"><h3>Bitkub API และข้อมูล</h3><ul class="check-list"><li>โปรเจกต์นี้ใช้ Bitkub Public API สำหรับราคาสาธารณะ จึงไม่ต้องใช้ API Key</li><li>ห้ามใส่ API Key, Seed Phrase, รหัสผ่าน หรือข้อมูลกระเป๋าเงินลงในโค้ดหรือ SD Card</li><li>ตรวจชื่อโดเมน API ทุกครั้งก่อนแก้โค้ด และอย่าใช้ URL ที่ไม่รู้จัก</li><li>ข้อมูล CDC เป็นตัวอย่างการศึกษา ไม่ใช่คำสั่งซื้อหรือคำแนะนำลงทุน</li></ul></div>
           <div class="card"><h3>SD Card และไฟล์รูป</h3><ul class="check-list"><li>ใช้ SD Card ที่เตรียมสำหรับโปรเจกต์ ไม่ใช้การ์ดที่มีข้อมูลส่วนตัว</li><li>อัปโหลดเฉพาะไฟล์ JPEG ที่ตรวจสอบแหล่งที่มาแล้ว</li><li>สำรองรูปและการตั้งค่าก่อนฟอร์แมตหรือเปลี่ยนการ์ด</li><li>ถอด SD Card หลังตัดไฟหรือหยุดการเขียนไฟล์แล้วเท่านั้น</li></ul></div>
           <div class="card"><h3>ไฟเลี้ยงและฮาร์ดแวร์</h3><ul class="check-list"><li>ใช้อะแดปเตอร์ USB <strong>5V / 2A</strong> คุณภาพดี</li><li>ห้ามใช้แหล่งจ่ายไฟแรงดันเกิน 5V กับพอร์ต USB‑C</li><li>ตรวจสาย USB‑C ว่าไม่ชำรุดและไม่ร้อนผิดปกติ</li><li>วางบอร์ดในเฟรมอะคริลิกเพื่อป้องกันการลัดวงจรจากพื้นผิวโลหะ</li></ul></div>
@@ -435,9 +450,9 @@ loop()  → ตรวจ Touch / WebServer / Timer
         <p class="section-intro">กดแต่ละช่วงเพื่อดูขั้นตอนย่อย ผู้เรียนทำตามลำดับนี้จนได้บอร์ดที่ใช้งานจริงหนึ่งชุด</p>
         <div class="practical">
           <details open><summary><span>13:00–13:15</span>1. ตรวจอุปกรณ์และประกอบชุด CryptoClock</summary><div class="practical-content"><p><strong>Checklist ก่อนเปิดไฟ</strong> — ติ๊กให้ครบทีละข้อ</p><ul class="assembly-checklist"><li><label><input type="checkbox">มีบอร์ด ESP32-2432S028R, เฟรมอะคริลิก, น็อต/เสารอง และสาย USB-C Data</label></li><li><label><input type="checkbox">วางบอร์ดในเฟรมโดยให้ช่อง USB-C, ช่อง MicroSD และปุ่ม BOOT/RESET เข้าถึงได้</label></li><li><label><input type="checkbox">ใส่เสารองและขันน็อตพอตึงด้วยมือ ห้ามขันแน่นเกินจนแผ่นอะคริลิกหรือบอร์ดบิดงอ</label></li><li><label><input type="checkbox">ใส่ MicroSD Card โดยหันด้านสัมผัสตามสัญลักษณ์ที่ช่อง TF/MicroSD และดันจนสุดพอดี</label></li><li><label><input type="checkbox">ต่อลำโพงเข้าขั้ว SPK+/SPK− ของบอร์ดตามผังขั้ว ห้ามต่อเข้าขาไฟ 5V หรือ GND</label></li><li><label><input type="checkbox">ต่อสาย USB-C Data เข้าบอร์ด; ใช้อะแดปเตอร์ USB ที่จ่าย <strong>5V / 2A</strong> สำหรับใช้งานแบบไม่ต่อคอมพิวเตอร์</label></li><li><label><input type="checkbox">ตรวจฉลากอะแดปเตอร์ว่าเอาต์พุต 5V และไม่ใช้แหล่งจ่ายแรงดันเกิน 5V</label></li></ul><ol><li>ต่อบอร์ด ESP32 เข้าคอมพิวเตอร์ด้วยสาย USB Type-C ที่ส่งข้อมูลได้</li><li>ใส่ MicroSD Card ที่ฟอร์แมต FAT32 แล้ว</li><li>ตรวจว่าบอร์ดมีไฟและคอมพิวเตอร์เห็น USB Port ใหม่</li><li>สร้างโฟลเดอร์สำหรับเก็บรูป Profile และ Slide ของตนเอง</li></ol><img class="lesson-photo" src="assets/lesson-photos/04-assembly.png" alt="ขั้นตอนประกอบบอร์ด ESP32 ในเฟรม ใส่ SD Card ต่อลำโพงและ USB-C"></div></details>
-          <details><summary><span>13:15–13:40</span>2. ตั้งค่า Arduino IDE และไลบรารี</summary><div class="practical-content"><ol><li>เปิด Arduino IDE และติดตั้ง ESP32 board package จาก Board Manager หากยังไม่มี</li><li>เปิด Library Manager แล้วติดตั้ง <code>WiFiManager</code>, <code>TFT_eSPI</code>, <code>ArduinoJson</code> และ <code>JPEGDecoder</code></li><li>เปิดโฟลเดอร์ <code>CryptoClock_Learning</code> แล้วเปิดไฟล์ <code>CryptoClock_Learning.ino</code></li><li>เลือก Board เป็น ESP32 Dev Module และเลือก Port ที่ตรงกับบอร์ด</li></ol><img class="lesson-photo" src="assets/lesson-photos/05-board-port.png" alt="เมนู Board และ Port ใน Arduino IDE"></div></details>
+          <details><summary><span>13:15–13:40</span>2. ตั้งค่า Arduino IDE และไลบรารี</summary><div class="practical-content"><ol><li>แตกไฟล์ Workshop แล้วเปิด <code>Install_Libraries.command</code> บน macOS หรือ <code>Install_Libraries.bat</code> บน Windows หนึ่งครั้ง</li><li>เปิด Arduino IDE และติดตั้ง ESP32 board package เวอร์ชัน <code>2.0.17</code> จาก Board Manager หากยังไม่มี</li><li>เปิดโฟลเดอร์ <code>CryptoClock_Learning</code> แล้วเปิดไฟล์ <code>CryptoClock_Learning.ino</code></li><li>เลือก Board เป็น ESP32 Dev Module, เลือก Port ที่ตรงกับบอร์ด, ตั้ง Upload Speed เป็น <code>460800</code> และ Partition Scheme เป็น <code>Minimal SPIFFS (1.9MB APP / 190KB SPIFFS)</code></li></ol><img class="lesson-photo" src="assets/lesson-photos/05-board-port.png" alt="เมนู Board และ Port ใน Arduino IDE"></div></details>
           <details><summary><span>13:40–14:10</span>3. Compile และ Upload ลงบอร์ด</summary><div class="practical-content"><ol><li>กดปุ่ม Verify เพื่อตรวจว่าโค้ด Compile ผ่าน</li><li>กดปุ่ม Upload แล้วรอจนขึ้นข้อความยืนยันการอัปโหลดสำเร็จ</li><li>หากค้างที่ <code>Connecting...</code> ให้กดปุ่ม BOOT ค้างไว้ช่วงเริ่ม Upload แล้วปล่อยเมื่อเริ่มเขียนข้อมูล</li><li>เปิด Serial Monitor ที่ 115200 baud เพื่อดูสถานะ SD Card และ Wi-Fi</li></ol><img class="lesson-photo portrait" src="assets/lesson-photos/06-upload-success.jpeg" alt="Arduino IDE แสดงผล Upload สำเร็จ"></div></details>
-          <details><summary><span>14:10–14:35</span>4. เชื่อม Wi-Fi และตรวจราคาจริง</summary><div class="practical-content"><ol><li>ใช้มือถือค้นหา Wi-Fi ชื่อ <code>CryptoClock-Setup</code> แล้วเชื่อมต่อ</li><li>หน้า WiFiManager จะเปิดเอง; หากไม่เปิด ให้เข้า <code>192.168.4.1</code> ในเบราว์เซอร์</li><li>เลือก Wi-Fi 2.4 GHz ของสถานที่ ใส่รหัสผ่าน แล้วกดบันทึก</li><li>รอให้บอร์ดรีสตาร์ต จากนั้นดูว่าจอเริ่มแสดงราคาเหรียญจาก Bitkub</li></ol><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/1-wifi-select.jpg" alt="ตัวอย่างการเลือก Wi-Fi ในหน้าตั้งค่า CryptoClock" loading="lazy"><p class="photo-credit">ภาพอ้างอิง: <a href="https://www.cashlessthailand.com/knowledge/cryptoclock-basic">CryptoClock Basic Manual</a></p></div></details>
+          <details><summary><span>14:10–14:35</span>4. เชื่อม Wi-Fi และตรวจราคาจริง</summary><div class="practical-content"><ol><li>ใช้มือถือค้นหา Wi-Fi ชื่อ <code>CryptoClock</code> แล้วเชื่อมต่อ</li><li>หากหน้า Setup ไม่เปิดเอง ให้เข้า <code>192.168.4.1</code> ในเบราว์เซอร์</li><li>เลือก Wi-Fi 2.4 GHz ของสถานที่ ใส่รหัสผ่าน แล้วกดบันทึก</li><li>รอให้บอร์ดรีสตาร์ต จากนั้นดูว่าจอเริ่มแสดงราคาเหรียญจาก Bitkub</li></ol><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/1-wifi-select.jpg" alt="ตัวอย่างการเลือก Wi-Fi ในหน้าตั้งค่า CryptoClock" loading="lazy"><p class="photo-credit">ภาพอ้างอิง: <a href="https://www.cashlessthailand.com/knowledge/cryptoclock-basic">CryptoClock Basic Manual</a></p></div></details>
           <details><summary><span>14:35–15:05</span>5. ใช้ Local IP ตั้งค่าหน้าจอ</summary><div class="practical-content"><ol><li>ดูบรรทัด <code>Settings: http://...</code> ใน Serial Monitor เพื่อหา IP ของบอร์ด</li><li>ให้มือถืออยู่ Wi-Fi เดียวกับบอร์ด แล้วเปิด IP นี้ในเบราว์เซอร์</li><li>เลือกเหรียญทั้ง 4 ช่อง เปิดหรือปิดหน้าที่ต้องการ และกำหนดเวลาแสดงผล</li><li>กดบันทึก แล้วตรวจว่าหน้าจอเปลี่ยนตามการตั้งค่า</li></ol><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/3-coin-select-web.png" alt="ตัวอย่างหน้าเว็บเลือกเหรียญ CryptoClock" loading="lazy"><p class="photo-credit">ภาพอ้างอิง: <a href="https://www.cashlessthailand.com/knowledge/cryptoclock-basic">CryptoClock Basic Manual</a></p></div></details>
           <details><summary><span>15:05–15:35</span>6. อัปโหลดรูป Profile และ SD Slide</summary><div class="practical-content"><ol><li>เตรียม Profile เป็น JPEG ขนาด 96×96 px และ Slide เป็น JPEG ขนาด 320×240 px</li><li>ในหน้า Local Settings เลือกตำแหน่ง Profile หรือ Slide ที่ต้องการ</li><li>เลือกไฟล์ JPEG แล้วกดอัปโหลด รอให้หน้าเว็บกลับมาที่ Settings</li><li>ตรวจภาพ Profile และ SD Slide บนจอจริง; หากภาพไม่ขึ้นให้ใช้ JPEG แบบมาตรฐาน ไม่ใช่ Progressive JPEG</li></ol><div class="grid grid-2"><div><img class="lesson-photo" src="https://www.cashlessthailand.com/images/manuals/basic/3-config-upload.png" alt="ตัวอย่างหน้าตั้งค่าอัปโหลดรูป Profile" loading="lazy"><p class="photo-credit">ภาพอ้างอิง: <a href="https://www.cashlessthailand.com/knowledge/cryptoclock-basic">CryptoClock Basic Manual</a></p></div><img class="lesson-photo" src="assets/generated/cryptoclock-slide-product.png" alt="ตัวอย่างภาพ Slide ที่แสดงบน CryptoClock ในเฟรมอะคริลิก"></div></div></details>
           <details><summary><span>15:35–16:00</span>7. ตรวจผลงานและสรุป</summary><div class="practical-content"><ol><li>ตรวจว่าบอร์ดต่อ Wi-Fi และดึงราคา Bitkub ได้</li><li>ตรวจการวนหน้า Profile, ราคาเหรียญ, CDC และ SD Slide ตามการตั้งค่าของผู้เรียน</li><li>เปิด Local IP ซ้ำเพื่อยืนยันว่าการตั้งค่ายังอยู่</li><li>ถ่ายภาพผลงานของแต่ละคนเพื่อใช้สรุปกิจกรรม</li></ol><img class="lesson-photo" src="assets/generated/cryptoclock-price-product.png" alt="ตัวอย่าง CryptoClock ในเฟรมอะคริลิกใสทรงตั้ง"></div></details>
@@ -485,9 +500,9 @@ loop()  → ตรวจ Touch / WebServer / Timer
       <section id="troubleshoot">
         <p class="eyebrow">16 · Troubleshooting</p><h2>ปัญหาที่พบบ่อย</h2>
         <details><summary>Arduino IDE ไม่พบ Port ของ ESP32</summary><p>เปลี่ยนสาย USB ก่อน เพราะบางเส้นชาร์จได้อย่างเดียว จากนั้นตรวจ USB Driver เช่น CP210x หรือ CH340 และลองเสียบ Port อื่น</p></details>
-        <details><summary>Compile แล้วขึ้นว่าไม่พบ WiFiManager.h</summary><p>เปิด Library Manager ค้นหา WiFiManager ติดตั้งไลบรารี แล้วปิดและเปิด Arduino IDE ใหม่หนึ่งครั้ง</p></details>
+        <details><summary>Compile แล้วขึ้นว่าไม่พบไฟล์ไลบรารี (.h)</summary><p>ปิด Arduino IDE แล้วรัน <code>Install_Libraries.command</code> บน macOS หรือ <code>Install_Libraries.bat</code> บน Windows อีกครั้ง จากนั้นเปิด Arduino IDE ใหม่ ตรวจว่าคุณเปิดไฟล์จากโฟลเดอร์ Workshop ที่แตกไฟล์แล้ว</p></details>
         <details><summary>จอขาว จอดำ หรือภาพเป็นเส้น</summary><p>ตรวจการตั้งค่า TFT_eSPI ให้ตรงรุ่นจอ ตรวจ Pin และไฟเลี้ยง หากมีไฟ Backlight แต่ไม่มีภาพ มักเกิดจาก Driver หรือ Pin configuration ไม่ตรง</p></details>
-        <details><summary>ไม่พบเครือข่าย CryptoClock-Setup</summary><p>WiFiManager จะเปิด AP เมื่อยังไม่มี Wi-Fi ที่เชื่อมได้ หากบอร์ดจำเครือข่ายเดิมอยู่ให้ล้างค่าด้วย <code>wifiManager.resetSettings()</code> ชั่วคราว แล้ว Upload ใหม่</p></details>
+        <details><summary>ไม่พบเครือข่าย CryptoClock</summary><p>บอร์ดจะเปิด Local AP ชื่อ <code>CryptoClock</code> เมื่อยังไม่มี Wi-Fi ที่เชื่อมได้ หากเคยตั้งค่า Wi-Fi สำเร็จแล้ว ให้เปิดหน้า Settings จาก IP ที่บอร์ดแสดงใน Serial Monitor แทน</p></details>
         <details><summary>เชื่อม Wi-Fi ไม่สำเร็จ</summary><p>ตรวจว่าเป็นเครือข่าย 2.4 GHz รหัสผ่านถูกต้อง และหน้า Login ของ Wi-Fi ไม่ต้องยืนยันเพิ่มเติม บอร์ด ESP32 ทั่วไปไม่เชื่อม 5 GHz</p></details>
         <details><summary>ราคา Bitkub ไม่ขึ้นหรือขึ้น Waiting for Bitkub API</summary><p>ตรวจอินเทอร์เน็ตและเปิด Serial Monitor ดู HTTP code จากนั้นลองเปิด URL Ticker V3 บนคอมพิวเตอร์ หาก API ไม่พร้อม โปรแกรมจะเก็บค่าล่าสุดที่เคยดึงสำเร็จไว้</p></details>
         <details><summary>หน้า CDC ขึ้น CDC data unavailable</summary><p>ตรวจ Wi-Fi และเวลาจาก Bitkub server หน้า CDC ต้องเรียก TradingView History ซึ่งมีข้อมูลมากกว่า Ticker จึงอาจใช้เวลาหลายวินาที</p></details>
@@ -509,7 +524,7 @@ loop()  → ตรวจ Touch / WebServer / Timer
         <p class="eyebrow">18 · Glossary</p><h2>คำศัพท์สำคัญ</h2>
         <div class="table-wrap"><table><thead><tr><th>คำศัพท์</th><th>ความหมายแบบง่าย</th></tr></thead><tbody>
           <tr><td>ESP32</td><td>ไมโครคอนโทรลเลอร์ที่มี Wi-Fi และ Bluetooth ในตัว</td></tr>
-          <tr><td>WiFiManager</td><td>ไลบรารีช่วยสร้างหน้าเลือกและบันทึก Wi-Fi โดยไม่ฝังรหัสผ่านในโค้ด</td></tr>
+          <tr><td>Local AP</td><td>Wi-Fi ชั่วคราวที่บอร์ดสร้างขึ้นเพื่อให้มือถือเข้าไปตั้งค่าเครือข่ายได้</td></tr>
           <tr><td>TFT</td><td>จอสีขนาดเล็กที่ ESP32 สั่งวาดด้วยพิกัด</td></tr>
           <tr><td>struct</td><td>แบบฟอร์มข้อมูลที่รวมค่าหลายชนิดไว้เป็นหนึ่งรายการ</td></tr>
           <tr><td>array</td><td>ชุดข้อมูลหลายรายการที่เรียกด้วยลำดับ index เริ่มจาก 0</td></tr>
