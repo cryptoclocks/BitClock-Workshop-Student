@@ -240,8 +240,6 @@ bool load_wifi() {
 
   Serial.print("โหลด WiFi SSID: ");
   Serial.println(wifi_ssid);
-  Serial.print("โหลด WiFi Password: ");
-  Serial.println(wifi_password);
 
   file.close();
   return true;

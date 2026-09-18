@@ -172,7 +172,6 @@ void showPage9()
     int basePrice = selectedPrice;
     Serial.print("basePrice:");
     Serial.println(basePrice);
-    calculatePrices(basePrice);
     Serial.print("region:");
     Serial.println(region);
     Serial.print("currencyIndex:");
