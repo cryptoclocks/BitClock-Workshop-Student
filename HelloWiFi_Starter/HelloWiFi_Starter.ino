@@ -20,8 +20,8 @@ constexpr uint8_t TOUCH_MOSI = 32;
 constexpr uint8_t TOUCH_MISO = 39;
 constexpr uint8_t TOUCH_CLK  = 25;
 constexpr uint8_t TOUCH_CS   = 33;
-constexpr uint8_t BOOT_BUTTON = 0;
 constexpr uint16_t TOUCH_THRESHOLD = 280;
+constexpr uint16_t DISPLAY_MODE_HOLD_MS = 2000;
 const char* DISPLAY_MODE_FILE = "/hello-display-mode.txt";
 
 TFT_eSPI tft = TFT_eSPI();
@@ -51,6 +51,9 @@ bool loadDisplayMode(bool& inversionOn) {
   String value = file.readStringUntil('\n');
   file.close();
   value.trim();
+  // `setup` is intentionally used by data/ to show the color selector again
+  // after a LittleFS upload.
+  if (value == "setup") return false;
   if (value != "black" && value != "white") return false;
   inversionOn = (value == "black");
   return true;
@@ -104,6 +107,33 @@ void handleDisplayModeTouch() {
   ESP.restart();
 }
 
+// แตะค้างที่ใดก็ได้ 2 วินาทีเพื่อกลับมาหน้าเลือก Black / White
+// ไม่ใช้ปุ่ม BOOT (GPIO0) เพราะปุ่มนี้อาจพา ESP32 เข้าโหมดดาวน์โหลดได้
+// ก่อนที่โปรแกรมจะเริ่มทำงาน
+void checkDisplayModeShortcut() {
+  static unsigned long touchStartedAt = 0;
+  static bool shortcutOpened = false;
+
+  TouchPoint point = touch.getTouch();
+  if (point.zRaw <= TOUCH_THRESHOLD) {
+    touchStartedAt = 0;
+    shortcutOpened = false;
+    return;
+  }
+
+  if (touchStartedAt == 0) {
+    touchStartedAt = millis();
+    return;
+  }
+
+  if (!shortcutOpened && millis() - touchStartedAt >= DISPLAY_MODE_HOLD_MS) {
+    shortcutOpened = true;
+    chooseDisplayMode = true;
+    touchWasDown = false;
+    drawDisplayModeSetup();
+  }
+}
+
 void showMessage(const String& title, const String& detail, uint16_t color) {
   tft.fillScreen(TFT_BLACK);
   tft.setTextDatum(MC_DATUM);
@@ -128,8 +158,6 @@ void connectWiFi() {
 
 void setup() {
   Serial.begin(115200);
-  pinMode(BOOT_BUTTON, INPUT_PULLUP);
-  const bool resetDisplayMode = (digitalRead(BOOT_BUTTON) == LOW);
 
   tft.begin();
   tft.setRotation(1);     // แนวนอน 320 x 240
@@ -140,12 +168,6 @@ void setup() {
     return;
   }
   touch.begin();
-
-  // Hold BOOT while switching the board on to show Black/White setup again.
-  if (resetDisplayMode) {
-    LittleFS.remove(DISPLAY_MODE_FILE);
-    Serial.println("Display mode reset: choose Black or White again");
-  }
 
   bool inversionOn = false;
   if (!loadDisplayMode(inversionOn)) {
@@ -172,5 +194,7 @@ void setup() {
 void loop() {
   if (chooseDisplayMode) {
     handleDisplayModeTouch();
+  } else {
+    checkDisplayModeShortcut();
   }
 }
