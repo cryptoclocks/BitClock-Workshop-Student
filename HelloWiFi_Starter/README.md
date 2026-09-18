@@ -4,9 +4,10 @@
 
 1. เปิด `HelloWiFi_Starter.ino`
 2. แก้ `WIFI_SSID` และ `WIFI_PASSWORD` ให้เป็น Wi-Fi 2.4 GHz ของตนเอง
-3. ใน Arduino IDE เลือก **ESP32 Dev Module** และ Partition Scheme **Minimal SPIFFS (1.9MB APP with OTA)**
+3. ใน Arduino IDE เลือก **ESP32 Dev Module** และ Partition Scheme **Minimal SPIFFS (1.9MB APP / 190KB SPIFFS)**
 4. Upload ที่ 460800 baud
-5. เปิด Serial Monitor ที่ 115200 baud เพื่อดู IP Address
+5. ครั้งแรกจอจะแสดงหน้า **Setup display** ให้แตะ **Black** สำหรับโหมดพื้นหลังดำ หรือ **White** หากจอของบอร์ดแสดงสีกลับด้าน บอร์ดจะจำค่าไว้ใน LittleFS และรีสตาร์ตเอง
+6. เปิด Serial Monitor ที่ 115200 baud เพื่อดู IP Address
 
 ต้องตั้งค่าไลบรารี TFT_eSPI ให้ตรงกับบอร์ด ESP32-2432S028R ก่อน Upload เช่นเดียวกับโปรเจกต์ CryptoClock หลัก
 
@@ -17,5 +18,7 @@
 - `WiFi.status()` ตรวจสถานะ
 - `Serial.println()` แสดงข้อความใน Serial Monitor
 - `tft.drawString()` วาดข้อความบนจอ
+- `tft.setSwapBytes(true)` ตั้งลำดับไบต์สำหรับภาพสี ไม่ใช่คำสั่งเลือกพื้นหลังดำ/ขาว
+- `LittleFS` เก็บโหมดสีจอที่เลือกไว้
 - `setup()` ทำครั้งเดียวตอนเปิดเครื่อง
 - `loop()` ทำซ้ำตลอดเวลา
