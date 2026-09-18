@@ -7,6 +7,10 @@ build/
 *.elf
 *.bin
 *.map
+data/
+private-backup/
+previous-learning/
+sd/4.1.4/System/website/api_config.json
 
 # Python cache
 __pycache__/

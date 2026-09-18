@@ -186,7 +186,7 @@
     <aside>
       <nav class="toc" aria-label="สารบัญ">
         <p class="toc-title">สารบัญบทเรียน</p>
-        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
+        <a href="#overview">ภาพรวมโครงการ</a><a href="#benefits">ประโยชน์</a><a href="#objectives">วัตถุประสงค์</a><a href="#features">ฟีเจอร์</a><a href="#audience">เหมาะกับใคร</a><a href="#equipment">อุปกรณ์</a><a href="#software">ซอฟต์แวร์</a><a href="#architecture">การทำงาน</a><a href="#verify">Why Verify?</a><a href="#security">Security เบื้องต้น</a><a href="#wifi-hygiene">Wi‑Fi Hygiene</a><a href="#diagrams">Block Diagram และ Flowchart</a><a href="#cdc-theory">CDC Action Zone V3.0</a><a href="#code-explained">อธิบายโค้ด</a><a href="#files">รู้จักไฟล์</a><a href="#code-viewer">ดูโค้ดทั้งหมด</a><a href="#settings">ตั้งค่าผ่าน Local IP</a><a href="#afternoon">ภาคปฏิบัติ 3 ชั่วโมง</a><a href="#outcomes">สิ่งที่ได้กลับไป</a><a href="#images">ตัวอย่างหน้าจอ</a><a href="#troubleshoot">แก้ปัญหา</a><a href="#exercises">แบบฝึกหัด</a><a href="#glossary">คำศัพท์</a>
       </nav>
     </aside>
 
@@ -194,7 +194,7 @@
       <section id="overview">
         <p class="eyebrow">01 · Overview</p><h2>โปรเจกต์นี้คืออะไร</h2>
         <p class="section-intro">CryptoClock แสดงข้อมูลแบบเต็มหน้าจอบน ESP32 พร้อมสลับ Profile → ราคาเหรียญ → CDC Action Zone → SD Slide อัตโนมัติ และตั้งค่าเครือข่ายได้จากมือถือ</p>
-        <div class="flow"><div class="flow-step"><strong>1</strong>WiFiManager</div><div class="flow-arrow">›</div><div class="flow-step"><strong>2</strong>Bitkub API</div><div class="flow-arrow">›</div><div class="flow-step"><strong>3</strong>ประมวลผลข้อมูล</div><div class="flow-arrow">›</div><div class="flow-step"><strong>4</strong>แสดง 4 หน้าหลัก</div></div>
+        <div class="flow"><div class="flow-step"><strong>1</strong>Wi-Fi / Local AP</div><div class="flow-arrow">›</div><div class="flow-step"><strong>2</strong>Public Price API</div><div class="flow-arrow">›</div><div class="flow-step"><strong>3</strong>ประมวลผล JSON</div><div class="flow-arrow">›</div><div class="flow-step"><strong>4</strong>แสดง 4 หน้าหลัก</div></div>
       </section>
 
       <section id="benefits">
@@ -250,9 +250,9 @@
         <p class="eyebrow">07 · Software</p><h2>ซอฟต์แวร์และไลบรารี</h2>
         <div class="grid grid-2">
           <div class="card"><div class="number">1</div><h3>Arduino IDE</h3><p>โปรแกรมสำหรับเปิด แก้ Compile และ Upload โค้ดลง ESP32 พร้อมติดตั้ง ESP32 Board Package</p></div>
-          <div class="card"><div class="number">2</div><h3>WiFiManager</h3><p>สร้างหน้าเลือก Wi-Fi อัตโนมัติเมื่ออุปกรณ์ยังไม่มีข้อมูลเครือข่ายที่บันทึกไว้</p></div>
+          <div class="card"><div class="number">2</div><h3>Wi-Fi และ Local Web</h3><p>โค้ดเปิด AP ชื่อ <code>CryptoClock</code> เมื่อยังไม่มีเครือข่ายที่บันทึกไว้ แล้วให้ผู้ใช้เลือก Wi-Fi ผ่านหน้าเว็บของบอร์ด</p></div>
           <div class="card"><div class="number">3</div><h3>TFT_eSPI</h3><p>ไลบรารีวาดข้อความ เส้น กรอบ และสีบนจอ TFT ต้องตั้งค่า Driver และ Pin ให้ตรงกับฮาร์ดแวร์</p></div>
-          <div class="card"><div class="number">4</div><h3>ArduinoJson</h3><p>อ่านค่า <code>last</code>, <code>high_24_hr</code>, <code>low_24_hr</code> และชุด OHLC จาก JSON ของ Bitkub</p></div>
+          <div class="card"><div class="number">4</div><h3>ArduinoJson</h3><p>อ่านค่า JSON จาก API ที่เลือกใน <code>api_config.json</code> เช่น ราคา สูงสุด ต่ำสุด และข้อมูล OHLC</p></div>
           <div class="card"><div class="number">5</div><h3>JPEGDecoder</h3><p>ถอดรหัสไฟล์ <code>profile.jpg</code> และ <code>slide1.jpg</code> จาก SD Card แล้วส่งพิกเซลไปยัง TFT_eSPI</p></div>
           <div class="card"><div class="number">6</div><h3>HTTPClient + SD</h3><p>มาพร้อม ESP32 core ใช้เรียก HTTPS API และอ่านไฟล์จาก SD Card</p></div>
         </div>
@@ -263,10 +263,11 @@
         <p class="eyebrow">08 · How it works</p><h2>โปรแกรมทำงานอย่างไร</h2>
         <div class="steps">
           <div class="step-card"><h3>เริ่มจอและ SD Card</h3><p><code>setup()</code> เริ่ม TFT จากนั้นตรวจ SD Card และนับไฟล์ <code>/slides/slide1.jpg</code> ถึง <code>slide8.jpg</code></p></div>
-          <div class="step-card"><h3>เชื่อมต่อ Wi-Fi</h3><p><code>autoConnect()</code> ใช้ Wi-Fi ที่เคยบันทึกไว้ หากยังไม่มีจะแสดงหน้าต่อ Wi-Fi และเปิด CryptoClock-Setup</p></div>
-          <div class="step-card"><h3>ดึงราคาจาก Bitkub</h3><p>เรียก Ticker V3 แยกตามคู่ BTC_THB, ETH_THB, KUB_THB และ USDT_THB แล้วเก็บข้อมูลลง <code>Coin</code></p></div>
-          <div class="step-card"><h3>วน 4 หน้าหลัก</h3><p><code>enterPage()</code> และ <code>updatePageSequence()</code> คุม Profile → Coin → CDC → SD Slide ด้วย <code>millis()</code></p></div>
-          <div class="step-card"><h3>คำนวณ CDC Action Zone</h3><p>อ่าน OHLC BTC/THB ระยะ 4 ชั่วโมง 60 แท่ง คำนวณ EMA 12 และ EMA 26; เส้นเร็วอยู่เหนือเส้นช้าคือ BUY zone มิฉะนั้นเป็น SELL zone</p></div>
+          <div class="step-card"><h3>เชื่อมต่อ Wi-Fi</h3><p>โค้ดโหลดค่า Wi-Fi จาก LittleFS ก่อน หากยังไม่มีหรือเชื่อมต่อไม่ได้ จะเปิด AP ชื่อ <code>CryptoClock</code> และ WebServer ที่ <code>192.168.4.1</code></p></div>
+          <div class="step-card"><h3>กำหนด Device ID</h3><p>ถ้ายังไม่มี ID ระบบสร้าง ID รูปแบบ <code>CCN</code> จาก MAC Address ของ ESP32 แล้วบันทึกไว้ใน LittleFS</p></div>
+          <div class="step-card"><h3>ดึงและแปลงราคา</h3><p>งานดึงราคาจะอ่านแหล่ง API จาก <code>api_config.json</code> และแปลง JSON ตามชนิดเหรียญ จึงรองรับทั้ง Binance, Bitkub และแหล่งที่ตั้งค่าไว้</p></div>
+          <div class="step-card"><h3>วน 4 หน้าหลัก</h3><p>โค้ดใช้ตัวจับเวลาและ <code>millis()</code> ควบคุม Profile → ราคาเหรียญ → CDC → SD Slide</p></div>
+          <div class="step-card"><h3>คำนวณ CDC Action Zone</h3><p>หน้า CDC เรียกข้อมูลแท่งเทียนจาก Binance Klines แล้วคำนวณ EMA 12 และ EMA 26; ใช้เป็นข้อมูลประกอบการเรียนรู้ ไม่ใช่คำแนะนำลงทุน</p></div>
         </div>
         <pre><code>หน้าต่อ Wi-Fi (แสดงเมื่อต้องตั้งค่า)
                  ↓
@@ -284,8 +285,8 @@ Profile → Coin: BTC → ETH → KUB → USDT → CDC Action Zone → SD Slides
           <div class="card"><div class="number">3</div><h3>ดูความสมเหตุสมผล</h3><p>หากตัวเลขไม่ตรง ให้ตรวจ Wi‑Fi, HTTP response และชื่อคู่ตลาดก่อนสรุปว่าจอหรือ API ผิดพลาด</p></div>
         </div>
         <div class="grid grid-2" style="margin-top:17px">
-          <div class="card"><h3>กิจกรรม: API → JSON → Serial Monitor → จอ</h3><ol><li>เปิด Serial Monitor ที่ 115200 baud</li><li>ดูสถานะการดึงราคาและชื่อคู่ตลาด</li><li>เปิดหน้า Bitkub ของคู่เดียวกันบนมือถือหรือคอมพิวเตอร์</li><li>เทียบราคาและเวลา แล้วบันทึกผลว่าตรงหรือแตกต่างเพราะอะไร</li></ol></div>
-          <div class="card"><img class="lesson-photo" src="assets/generated/bitkub-json-serial.png" alt="ตัวอย่าง JSON จาก Bitkub และ Serial Monitor ของ CryptoClock"><p class="caption">ตัวอย่างการตามข้อมูลจาก API ถึงหน้าจอ</p></div>
+          <div class="card"><h3>กิจกรรม: กดปุ่มดู API → JSON</h3><ol><li>เลือกคู่ตลาดที่ต้องการ เช่น <code>BTC_THB</code></li><li>กดปุ่ม “ดึงข้อมูลจาก GitHub API” ด้านล่าง</li><li>เว็บไซต์จะอ่าน URL API จากไฟล์ตั้งค่าบน GitHub แล้วเรียกข้อมูลจริงมาแสดง</li><li>อ่านค่าใน JSON เช่น ราคา เวลา และชื่อคู่ตลาด แล้วอธิบายว่าโค้ดบน ESP32 นำไปแสดงผลอย่างไร</li></ol><button type="button" id="fetch-api-demo">ดึงข้อมูลจาก GitHub API</button><select id="api-symbol" aria-label="เลือกคู่ตลาด"><option value="BTC_THB">BTC_THB</option><option value="ETH_THB">ETH_THB</option><option value="KUB_THB">KUB_THB</option><option value="USDT_THB">USDT_THB</option></select><pre id="api-demo-output" style="white-space:pre-wrap;max-height:220px;overflow:auto">กดปุ่มเพื่อเริ่มดึงข้อมูลจริงจาก API</pre></div>
+          <div class="card"><img class="lesson-photo" src="assets/generated/bitkub-json-serial.png" alt="ตัวอย่าง JSON จาก Bitkub และ Serial Monitor ของ CryptoClock"><p class="caption">ตัวอย่างการตามข้อมูลจาก API ถึงหน้าจอ</p><p class="caption">กิจกรรมด้านซ้ายเป็นการเรียกข้อมูลจากเว็บไซต์โดยตรง ส่วนภาพนี้ใช้เชื่อมโยงให้เห็นว่า ESP32 อ่าน JSON ในลักษณะเดียวกัน</p></div>
         </div>
         <div class="callout"><strong>หลักคิด:</strong> ตรวจแหล่งข้อมูล · ตรวจเวลา · ตรวจเส้นทางข้อมูล — แล้วจึงตัดสินใจจากสิ่งที่หน้าจอแสดง</div>
       </section>
@@ -348,37 +349,75 @@ EMA 12 ≤ EMA 26  → SELL zone</code></pre>
         <p class="eyebrow">11 · Code guide</p><h2>อธิบายโค้ดแต่ละส่วน</h2>
         <p class="section-intro">ให้เริ่มอ่านจากหน้าที่ของแต่ละไฟล์ก่อน ไม่จำเป็นต้องเข้าใจทุกบรรทัดในครั้งแรก</p>
         <details><summary><code>CryptoClock_Learning.ino</code> · ศูนย์กลางของโปรแกรม</summary><p>เริ่มจอ TFT, SD Card และ Wi-Fi จากนั้นเปิด Local Settings, เรียกข้อมูลราคา และสั่งให้หน้าจอวนตามลำดับที่กำหนด</p></details>
-        <details><summary><code>AppConfig.h</code> · ค่าที่ตั้งไว้ล่วงหน้า</summary><p>รวม Pin ของบอร์ด, เวลาแสดงแต่ละหน้า, ขนาดภาพ และค่าที่ใช้คำนวณ CDC เพื่อแก้ไขง่ายโดยไม่ต้องค้นหาหลายไฟล์</p></details>
-        <details><summary><code>CoinData.h / CoinData.cpp</code> · รายชื่อเหรียญ</summary><p>เก็บชื่อเหรียญ, คู่ตลาด Bitkub, สี และข้อมูลราคาที่จะส่งไปแสดงบนหน้าจอ</p></details>
-        <details><summary><code>BitkubApi.h / BitkubApi.cpp</code> · ดึงข้อมูลราคา</summary><p>เชื่อมต่อ Bitkub Public API, อ่าน JSON แล้วแปลงเป็นราคา, จุดสูงสุด/ต่ำสุด 24 ชั่วโมง และข้อมูลกราฟ CDC</p></details>
-        <details><summary><code>Pages.h / Pages.cpp</code> · วาดหน้าจอ</summary><p>กำหนดตำแหน่งข้อความ, ราคา, กราฟ และรูปภาพสำหรับหน้า Profile, ราคาเหรียญ, CDC, SD Slide และ Wi-Fi Setup</p></details>
-        <details><summary><code>JpegHelper.h / JpegHelper.cpp</code> · แสดงรูปจาก SD Card</summary><p>อ่านไฟล์ JPEG เป็นส่วนย่อยแล้วส่งไปยังจอ TFT เพื่อแสดง Profile และ Slide โดยไม่ใช้หน่วยความจำมากเกินไป</p></details>
+        <details><summary><code>GlobalParameter.h / .cpp</code> · ค่ากลางของระบบ</summary><p>รวมตัวแปรร่วม เช่น Pin, รายชื่อเหรียญ, API, สกุลเงิน, เวลา และสถานะหน้าจอ</p></details>
+        <details><summary><code>GlobalFunction.cpp</code> · ฟังก์ชันหลัก</summary><p>เชื่อมต่อ API, อ่าน JSON, แปลงราคา, อัปเดตค่าที่แสดงบนจอ และควบคุมงานดึงข้อมูลราคา</p></details>
+        <details><summary><code>page1.cpp / page2.cpp / page26.cpp</code> · หน้าจอหลัก</summary><p>กำหนดพิกัดและวาดหน้า Profile, ราคาเหรียญ และ CDC Action Zone บนจอ 320×240</p></details>
+        <details><summary><code>JpgSupport.cpp / cc_sd.cpp</code> · รูปภาพและ SD Card</summary><p>เริ่มต้น SD Card เปิดไฟล์ภาพ และถอดรหัส JPEG เพื่อส่งภาพ Profile และ Slide ไปยังจอ TFT</p></details>
+        <details><summary><code>HTTPClient และ WiFiClientSecure</code> · เรียก HTTPS API</summary><p>โค้ดใช้ <code>HTTPClient</code> เปิดคำขอ HTTPS แล้วอ่าน JSON จากแหล่งข้อมูลราคา ส่วน <code>WiFiClientSecure</code> เป็นตัวจัดการการเชื่อมต่อแบบเข้ารหัส</p><p><strong>ทำไมในโค้ดจึงมี <code>client.setInsecure()</code>?</strong> ตัวอย่างเรียนใช้คำสั่งนี้เพื่อให้ ESP32 เรียก HTTPS ได้ง่ายโดยไม่ต้องติดตั้ง Root CA certificate แต่ในการใช้งานจริงควรตรวจสอบใบรับรอง TLS ด้วย Root CA ที่ถูกต้อง เพื่อป้องกันการเชื่อมต่อกับปลายทางปลอม</p></details>
+        <details><summary><code>cc_littlefs.cpp</code> · เก็บค่าตั้งค่าในเครื่อง</summary><p>อ่านและบันทึก Wi-Fi, Device ID, รายชื่อเหรียญ, โปรไฟล์ และค่าหน้าจอใน LittleFS โดย Device ID ใหม่จะสร้างจาก MAC Address ในรูปแบบ <code>CCN...</code></p></details>
+        <details><summary><code>page26.cpp</code> · CDC Action Zone</summary><p>เรียกข้อมูลแท่งเทียนจาก Binance Klines แล้วคำนวณ EMA 12 และ EMA 26 เพื่อแสดง BUY/SELL zone เป็นข้อมูลประกอบการเรียนรู้</p></details>
+        <div class="callout"><strong>ขอบเขตของโค้ดล่าสุด:</strong> เวอร์ชัน Workshop นี้เน้น ESP32, Local Web Settings, API ราคา, LittleFS, SD Card และจอ TFT</div>
       </section>
 
       <section id="files">
         <p class="eyebrow">12 · Code tour</p><h2>รู้จักไฟล์สำคัญของโปรเจกต์</h2>
         <div class="code-tour">
-          <div class="file"><code>CryptoClock_Learning.ino</code><p>จุดเริ่มระบบ มี WiFiManager, state ของ 4 หน้าหลัก, timer, การรีเฟรชราคา และการกลับมาเชื่อม Wi-Fi</p></div>
-          <div class="file"><code>AppConfig.h</code><p>จุดรวมค่าที่ผู้สอนแก้บ่อย: ขา SD, ระยะเวลาแต่ละหน้า, Profile, จำนวนภาพ และค่า CDC</p></div>
-          <div class="file"><code>CoinData.h / .cpp</code><p>รูปแบบข้อมูลและรายชื่อ 4 คู่เหรียญ Bitkub: BTC_THB, ETH_THB, KUB_THB และ USDT_THB</p></div>
-          <div class="file"><code>BitkubApi.h / .cpp</code><p>เรียก Ticker V3 และ TradingView History, อ่าน JSON และคำนวณ EMA สำหรับ CDC Action Zone</p></div>
-          <div class="file"><code>Pages.h / .cpp</code><p>วาดหน้าต่อ Wi-Fi, Profile, ราคาเหรียญ, CDC และ SD Slide</p></div>
-          <div class="file"><code>JpegHelper.h / .cpp</code><p>อ่าน JPEG จาก SD Card ทีละบล็อกและส่งภาพไปยังจอ TFT</p></div>
+          <div class="file"><code>CryptoClock_Learning.ino</code><p>จุดเริ่มระบบ มี state ของ 4 หน้าหลัก, timer, การรีเฟรชราคา, Local Web Settings และการกลับมาเชื่อม Wi-Fi</p></div>
+          <div class="file"><code>GlobalModule.h</code><p>รวมไลบรารีและอ็อบเจกต์กลางที่หลายไฟล์ใช้ร่วมกัน เช่น จอ TFT, SD และระบบพื้นฐานของ ESP32</p></div>
+          <div class="file"><code>GlobalParameter.h / .cpp</code><p>ตัวแปรร่วม เช่น รายชื่อเหรียญ ชนิด API สกุลเงิน เวลา และสถานะหน้าจอ</p></div>
+          <div class="file"><code>GlobalFunction.cpp</code><p>เรียก API ราคา อ่าน JSON แปลงค่าเงิน และอัปเดตข้อมูลที่ใช้แสดงผล</p></div>
+          <div class="file"><code>page26.cpp</code><p>เรียก Binance Klines และคำนวณ EMA สำหรับ CDC Action Zone</p></div>
+          <div class="file"><code>page1.cpp / page1.h</code><p>หน้า Profile แสดงข้อมูลโปรไฟล์และเวลา</p></div>
+          <div class="file"><code>page2.cpp / page2.h</code><p>หน้าราคาเหรียญ แสดงโลโก้ ชื่อเหรียญ ราคา และข้อมูลสูงสุด/ต่ำสุด</p></div>
+          <div class="file"><code>page3.cpp / page3.h</code><p>หน้าข้อมูลและเมนูเสริมของระบบ</p></div>
+          <div class="file"><code>page6.cpp / page6.h</code><p>หน้าข้อมูลเสริมและการแสดงผลข้อมูลภายนอก</p></div>
+          <div class="file"><code>page7.cpp / page7.h</code><p>หน้าฟังก์ชันเสริมของเฟิร์มแวร์</p></div>
+          <div class="file"><code>page8.cpp / page8.h</code><p>หน้าภาพเคลื่อนไหวและเอฟเฟกต์การแสดงผล</p></div>
+          <div class="file"><code>page9.cpp / page9.h</code><p>หน้าเมนู Settings และเมนูย่อย</p></div>
+          <div class="file"><code>page10.cpp / page10.h</code><p>หน้าตั้งค่าระบบเพิ่มเติม</p></div>
+          <div class="file"><code>page11.cpp / page11.h</code><p>หน้าตั้งค่าและการแสดงข้อมูลเสริม</p></div>
+          <div class="file"><code>page12.cpp / page12.h</code><p>หน้าตั้งค่าการแจ้งเตือนและตัวเลือกของระบบ</p></div>
+          <div class="file"><code>page13.cpp / page13.h</code><p>หน้าเมนูฟังก์ชันเสริมของเฟิร์มแวร์</p></div>
+          <div class="file"><code>page14.cpp / page14.h</code><p>หน้าตั้งค่าและการเลือกโหมดการทำงาน</p></div>
+          <div class="file"><code>page15.cpp / page15.h</code><p>หน้าฟังก์ชันเสริมและข้อมูลการใช้งาน</p></div>
+          <div class="file"><code>page16.cpp / page16.h</code><p>หน้าการทำงานเสริมของระบบ</p></div>
+          <div class="file"><code>page17.cpp / page17.h</code><p>หน้าฟังก์ชันการชำระเงินและข้อมูลเสริม</p></div>
+          <div class="file"><code>page18.cpp / page18.h</code><p>หน้าเมนูเสริมและการนำทาง</p></div>
+          <div class="file"><code>page19.cpp / page19.h</code><p>หน้าข้อมูลและตัวเลือกเพิ่มเติม</p></div>
+          <div class="file"><code>page20.cpp / page20.h</code><p>หน้าฟังก์ชันเสริมของโปรเจกต์</p></div>
+          <div class="file"><code>page21.cpp / page21.h</code><p>หน้าข้อมูลและการตั้งค่าเพิ่มเติม</p></div>
+          <div class="file"><code>page22.cpp / page22.h</code><p>หน้าแสดงข้อมูล Point และ CDC</p></div>
+          <div class="file"><code>page23.cpp / page23.h</code><p>หน้าข้อมูลและการทำงานเสริม</p></div>
+          <div class="file"><code>page24.cpp / page24.h</code><p>หน้าทดสอบและข้อมูลระบบ</p></div>
+          <div class="file"><code>page25.cpp / page25.h</code><p>หน้าทดสอบการแสดงผล</p></div>
+          <div class="file"><code>page26.cpp / page26.h</code><p>หน้า CDC Action Zone ใช้ข้อมูล Binance Klines และคำนวณ EMA 12/26</p></div>
+          <div class="file"><code>handle.cpp</code><p>จัดการ Touch, ปุ่ม, การเปลี่ยนหน้า และเหตุการณ์จากผู้ใช้</p></div>
+          <div class="file"><code>cc_littlefs.cpp</code><p>อ่านและบันทึก config, Wi-Fi, coin, profile, alert และ Device ID ใน LittleFS</p></div>
+          <div class="file"><code>cc_sd.cpp / JpgSupport.cpp</code><p>เริ่มต้น SD Card, อ่านไฟล์ภาพ และส่ง JPEG ไปยังจอ TFT</p></div>
         </div>
         <pre><code>// หัวใจของลำดับ 4 หน้าหลัก
 Profile → Coin (วน 4 เหรียญ) → CDC → SD Slide → Profile
 
-// ราคารีเฟรชทุก 60 วินาที
-if (millis() - lastPriceUpdateAt >= PRICE_REFRESH_MS) {
-  fetchAllBitkubTickers();
-}</code></pre>
+// ภาพรวมการทำงานของเวอร์ชันล่าสุด
+setup() → เริ่ม TFT / SD / LittleFS / Wi-Fi
+       → เปิด Local Web Settings
+       → อ่าน API ราคาและแสดงผล
+loop()  → ตรวจ Touch / WebServer / Timer
+       → วน Profile → Coin → CDC → SD Slide</code></pre>
+      </section>
+
+      <section id="code-viewer">
+        <p class="eyebrow">Code viewer</p><h2>ดูโค้ดทั้งหมดจากในเว็บ</h2>
+        <p class="section-intro">เลือกไฟล์เพื่อเปิดดูโค้ดของโปรเจกต์โดยตรงในหน้าเรียน เหมาะสำหรับเปิดดูระหว่างอธิบาย โดยโค้ดต้นฉบับยังอยู่ในโฟลเดอร์โปรเจกต์และ GitHub</p>
+        <div class="card"><label for="source-file"><strong>เลือกไฟล์โค้ด</strong></label><select id="source-file" style="margin:10px 0;width:100%;padding:10px"><option value="CryptoClock_Learning.ino">CryptoClock_Learning.ino</option><option value="GlobalFunction.cpp">GlobalFunction.cpp</option><option value="GlobalParameter.cpp">GlobalParameter.cpp</option><option value="GlobalParameter.h">GlobalParameter.h</option><option value="handle.cpp">handle.cpp</option><option value="cc_littlefs.cpp">cc_littlefs.cpp</option><option value="cc_sd.cpp">cc_sd.cpp</option><option value="page1.cpp">page1.cpp · Profile</option><option value="page2.cpp">page2.cpp · Coin</option><option value="page26.cpp">page26.cpp · CDC</option></select><button type="button" id="load-source">เปิดโค้ดไฟล์นี้</button><a id="open-source" href="#" target="_blank" rel="noopener" style="margin-left:12px">เปิดไฟล์ต้นฉบับ</a><pre id="source-output" style="white-space:pre;overflow:auto;max-height:620px;margin-top:16px">กด “เปิดโค้ดไฟล์นี้” เพื่อแสดงโค้ด</pre></div>
+        <div class="callout"><strong>หมายเหตุ:</strong> หน้าเว็บจะโหลดไฟล์จาก GitHub เพื่อให้เปิดดูได้จากทุกเครื่อง หากเปิดเว็บแบบออฟไลน์ ให้เปิดไฟล์โค้ดจากโฟลเดอร์โปรเจกต์โดยตรง</div>
       </section>
 
       <section id="settings">
         <p class="eyebrow">13 · Local Web Settings</p><h2>ตั้งค่าผ่าน Local IP ของบอร์ด</h2>
-        <p class="section-intro">เมื่อ ESP32 ต่อ Wi-Fi สำเร็จ จะเปิดหน้า Settings ในเครือข่ายเดียวกันที่ <code>http://IP-ของบอร์ด/</code> ตัวอย่างเช่น <code>http://192.168.1.42/</code> ไม่ต้องต่อ Internet เพื่อเปิดหน้าตั้งค่า แต่ต้องมี Internet เมื่อดึงราคาจาก Bitkub</p>
+        <p class="section-intro">เมื่อ ESP32 ต่อ Wi-Fi สำเร็จ ให้แตะหรือกดโลโก้เหรียญบนหน้าจอเพื่อเข้าสู่โหมดตั้งค่า จากนั้นเปิดหน้า Settings ในเครือข่ายเดียวกันที่ <code>http://IP-ของบอร์ด/</code> ตัวอย่างเช่น <code>http://192.168.1.42/</code> การเปิดหน้าตั้งค่าใช้เครือข่ายเดียวกัน ไม่จำเป็นต้องมี Internet แต่ต้องมี Internet เมื่อดึงราคาจาก API</p>
         <div class="grid grid-3">
-          <div class="card"><div class="number">1</div><h3>หา IP</h3><p>ดูบรรทัด <code>Settings: http://...</code> ใน Serial Monitor หรือดูจากหน้าจอหลังต่อ Wi-Fi สำเร็จ</p></div>
+          <div class="card"><div class="number">1</div><h3>กดโลโก้เหรียญ</h3><p>แตะหรือกดโลโก้เหรียญบนหน้าจอเพื่อเข้าสู่โหมดตั้งค่าและดู IP ของบอร์ด</p></div>
           <div class="card"><div class="number">2</div><h3>เปิดบนมือถือ/คอม</h3><p>ให้อุปกรณ์อยู่ Wi-Fi เดียวกับบอร์ด แล้วพิมพ์ IP ลงเบราว์เซอร์</p></div>
           <div class="card"><div class="number">3</div><h3>บันทึก</h3><p>กดบันทึกแล้วการตั้งค่าถูกเก็บใน ESP32 และใช้ต่อหลังรีสตาร์ต</p></div>
         </div>
@@ -488,5 +527,55 @@ if (millis() - lastPriceUpdateAt >= PRICE_REFRESH_MS) {
   </div>
 
   <footer class="footer"><strong>CryptoClock</strong><br>ESP32 · Bitkub API · CDC Action Zone · SD Card</footer>
+  <script>
+    (() => {
+      const button = document.getElementById('fetch-api-demo');
+      const symbol = document.getElementById('api-symbol');
+      const output = document.getElementById('api-demo-output');
+      const githubConfig = 'https://raw.githubusercontent.com/cryptoclocks/BitClock-Workshop-Student/main/sd/4.1.4/System/website/api_config.json';
+      button?.addEventListener('click', async () => {
+        button.disabled = true;
+        output.textContent = 'กำลังอ่าน api_config.json จาก GitHub...';
+        try {
+          const configResponse = await fetch(githubConfig, { cache: 'no-store' });
+          const config = configResponse.ok ? await configResponse.json() : null;
+          const template = config?.apis?.find(api => /bitkub/i.test(api.name || api.url || ''))?.url || 'https://api.bitkub.com/api/v3/market/ticker?sym={symbol}';
+          const url = template.replace('{symbol}', symbol.value);
+          const response = await fetch(url, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const json = await response.json();
+          output.textContent = JSON.stringify({ source: url, fetchedAt: new Date().toISOString(), data: json }, null, 2);
+        } catch (error) {
+          output.textContent = `ดึงข้อมูลไม่สำเร็จ: ${error.message}\nตรวจ Internet, CORS และ URL API แล้วลองใหม่`;
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+  <script>
+    (() => {
+      const select = document.getElementById('source-file');
+      const load = document.getElementById('load-source');
+      const output = document.getElementById('source-output');
+      const link = document.getElementById('open-source');
+      const base = 'https://raw.githubusercontent.com/cryptoclocks/BitClock-Workshop-Student/main/';
+      const loadFile = async () => {
+        const file = select.value;
+        const url = base + file;
+        link.href = url;
+        output.textContent = `กำลังโหลด ${file}...`;
+        try {
+          const response = await fetch(url, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          output.textContent = await response.text();
+        } catch (error) {
+          output.textContent = `เปิดไฟล์ไม่สำเร็จ: ${error.message}\nตรวจว่าไฟล์ถูก push ขึ้น GitHub แล้ว หรือเปิดจากโฟลเดอร์โปรเจกต์โดยตรง`;
+        }
+      };
+      load?.addEventListener('click', loadFile);
+      select?.addEventListener('change', () => { link.href = base + select.value; });
+    })();
+  </script>
 </body>
 </html>

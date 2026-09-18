@@ -1,97 +1,23 @@
-# CryptoClock Learning Edition
+# CryptoClock V4.1.4 CDC (workshop copy)
 
-โค้ดใหม่สำหรับสอนภายใน 3 ชั่วโมง อยู่ในโฟลเดอร์นี้เท่านั้น โค้ดต้นฉบับใน `CryptoClockV3` ไม่ถูกแก้ไข
+The active Arduino sketch is `CryptoClock_Learning.ino`. It is a copy of the original `V414_CDC` firmware, with Google Apps Script registration, profile upload, and permission check removed. The original files at `/Users/natthapongsuwanjit/Desktop/CryptoClockV3/Arduino/Version/V414_CDC` are unchanged.
 
-## ฮาร์ดแวร์ที่ใช้
+The workshop build includes coin logos, SD slides, a local settings website, Wi-Fi setup, price APIs, CDC Action Zone, audio, and LittleFS settings.
 
-- ESP32-2432S028R พร้อมจอ TFT 2.8 นิ้ว 240x320 และ Resistive Touch
-- สาย USB-A ไป USB Type-C ที่รองรับ Data
-- เฟรมอะคริลิกสำหรับ ESP32-2432S028R ขนาด 2.8 นิ้ว
-- MicroSD Card แบบ FAT32
+When a device has no registered ID in LittleFS, this build creates a stable local ID from the ESP32 Wi-Fi MAC address, prefixed with `CCN`. An existing stored device ID is kept. Services that expect a previously registered server-side device ID may still require configuration on that service; removing Google Scripts does not replace server-side registration.
 
-ไฟล์ `tft_setup.h` ตั้งค่าจอสำหรับบอร์ดรุ่นนี้ไว้ในโฟลเดอร์ Sketch แล้ว:
+## Build and flash
 
-- TFT: MISO 12, MOSI 13, SCLK 14, CS 15, DC 2, Backlight 21
-- MicroSD: SCLK 18, MISO 19, MOSI 23, CS 5
+Board: **ESP32 Dev Module** (ESP32 Arduino core 2.0.17). Partition: **Minimal SPIFFS (1.9MB APP / 190KB filesystem)**. Upload speed: **460800**. Required third-party libraries are the same ones used by the V414_CDC original.
 
-## หน้าจอของระบบ
-
-หน้าหลักวนอัตโนมัติตามลำดับ:
-
-1. Profile
-2. ราคาเหรียญแบบตัวเลขตรงกลาง (BTC, ETH, KUB, USDT)
-3. CDC Action Zone ของ BTC/THB กรอบเวลา 4 ชั่วโมง
-4. ภาพสไลด์จาก SD Card
-
-หน้าต่อ Wi-Fi เป็นหน้าตั้งค่าแยก จะแสดงเมื่อ WiFiManager เปิดเครือข่าย `CryptoClock-Setup`
-
-## Local Web Settings
-
-หลังบอร์ดเชื่อม Wi-Fi แล้ว จะมีหน้า Settings ที่ `http://<IP-ของบอร์ด>/` เช่น `http://192.168.1.42/` ดู IP ได้จาก Serial Monitor บรรทัด `Settings: http://...` หรือหน้าจอ Wi-Fi Connected
-
-หน้า Local Settings ใช้ได้กับโทรศัพท์หรือคอมพิวเตอร์ที่อยู่ Wi-Fi เดียวกับบอร์ด และทำได้ดังนี้:
-
-- เลือกเหรียญที่จะแสดงได้ 4 ช่อง: BTC, ETH, KUB, USDT, SOL, XRP, ADA, DOGE
-- เปิด/ปิดหน้า Profile, Coin, CDC และ SD Slide
-- ตั้งเวลาแสดงแต่ละหน้า/แต่ละเหรียญได้ 3–60 วินาที
-- อัปโหลด ดูรายการ และลบ `profile.jpg` กับ `slide1.jpg`–`slide8.jpg` บน SD Card จากเว็บ
-- ดาวน์โหลด Asset เริ่มต้นที่ยังขาดจาก GitHub ได้ โดยไม่เขียนทับรูปที่ผู้เรียนอัปโหลดเอง
-- การตั้งค่าถูกเก็บใน Preferences ของ ESP32 จึงยังอยู่หลังรีสตาร์ต
-
-ไม่มี Alarm, การแจ้งเตือนราคา, Telegram, LINE, MQTT, OTA หรือระบบผู้ใช้
-
-## ข้อมูลออนไลน์
-
-- ราคา: `GET https://api.bitkub.com/api/v3/market/ticker?sym=BTC_THB`
-- กราฟ CDC: `GET https://api.bitkub.com/tradingview/history`
-- CDC คำนวณ EMA 12 และ EMA 26 จากข้อมูล OHLC จำนวน 60 แท่ง
-- BUY zone เมื่อ EMA 12 มากกว่า EMA 26; นอกนั้นเป็น SELL zone
-- Public API ทั้งสองส่วนไม่ต้องใช้ API key
-
-CDC ในโครงการนี้เป็นตัวอย่างเชิงการศึกษา ไม่ใช่คำแนะนำในการลงทุน
-
-## ไลบรารี
-
-- WiFiManager
-- TFT_eSPI
-- ArduinoJson 6
-- JPEGDecoder
-- WiFi, HTTPClient และ SD จาก ESP32 core
-
-## เตรียม SD Card
-
-หลัง Upload โค้ดครั้งแรกและตั้งค่า Wi-Fi สำเร็จ บอร์ดจะดาวน์โหลดรูป Profile, พื้นหลัง/โลโก้เหรียญจากโปรเจกต์ V414_CDC และสไลด์ตัวอย่าง 3 ภาพจาก GitHub ลง SD Card ให้อัตโนมัติ หากยังไม่มีไฟล์นั้นอยู่แล้ว แต่ยังควรใส่ SD Card แบบ FAT32 ก่อนเปิดบอร์ด
-
-โค้ดเวอร์ชันนี้ใช้ SD Card สำหรับรูปและ Preferences สำหรับค่าตั้งต้น จึงไม่ต้องอัปโหลด LittleFS `data` เพิ่ม
-
-ใช้ SD Card แบบ FAT32 แล้วใส่ไฟล์ดังนี้:
-
-```text
-/
-├── profile.jpg              JPEG 96x96 px
-└── slides/
-    ├── slide1.jpg           JPEG 320x240 px
-    ├── slide2.jpg           JPEG 320x240 px
-    ├── slide3.jpg           JPEG 320x240 px
-    └── ... สูงสุด slide8.jpg
+```sh
+arduino-cli compile --fqbn 'esp32:esp32:esp32:PartitionScheme=min_spiffs' .
+arduino-cli upload --fqbn 'esp32:esp32:esp32:PartitionScheme=min_spiffs,UploadSpeed=460800' -p /dev/cu.usbserial-120 .
 ```
 
-ชื่อไฟล์ต้องเรียงต่อกัน เริ่มจาก `slide1.jpg` และไม่มีเลขขาดกลาง
+The `sd/` directory is an image of the original microSD contents. Copy its **contents**, including `4.1.4/`, to the root of a FAT32 microSD card. LittleFS settings are created on first boot if missing; `data/` is a local backup of the original project's filesystem data and is deliberately excluded from Git because it can contain device and Wi-Fi credentials. When no device ID exists, the firmware creates a stable `CCN...` ID from the ESP32 MAC address.
 
-## จุดที่แก้ไขบ่อย
+The local teaching site documents the workshop flow and is kept aligned with this firmware.
+# CryptoClock Learning Workshop
 
-- `AppConfig.h`: ขา SD, เวลาแสดงหน้า, ข้อมูล Profile และค่า CDC
-- `CoinData.cpp`: เหรียญและคู่ตลาด Bitkub
-- `Pages.cpp`: รูปแบบหน้าจอทั้ง 5 สถานะ
-- `BitkubApi.cpp`: ดึง JSON และคำนวณ CDC
-- `CryptoClock_Learning.ino`: ควบคุมลำดับหน้าหลัก
-
-## การ Compile
-
-ทดสอบแล้วด้วย:
-
-```bash
-arduino-cli compile --fqbn esp32:esp32:esp32 CryptoClock_Learning
-```
-
-เปิด `CryptoClock_Learning.ino` แล้ว Compile ได้โดยไม่ต้องแก้ `TFT_eSPI/User_Setup.h` เพราะโปรเจกต์มี `tft_setup.h` สำหรับ ESP32-2432S028R อยู่แล้ว จากนั้น Upload ผ่านสาย USB Type-C Data
+เริ่มต้นที่ [STUDENT-START-HERE.md](STUDENT-START-HERE.md) — ไลบรารีทั้งหมดที่สเก็ตช์ต้องใช้รวมอยู่ในแพ็กเกจแล้ว
