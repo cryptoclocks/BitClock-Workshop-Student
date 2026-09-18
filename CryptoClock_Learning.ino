@@ -359,6 +359,7 @@ void setup() {
   tft.init();
   tft.setSwapBytes(true);  // ให้ลำดับสีของ JPEG ตรงกับ Asset จาก V414_CDC
   tft.setRotation(1);
+  tft.invertDisplay(true);  // V414_CDC ใช้ Display inversion สำหรับจอบอร์ดนี้
   tft.fillScreen(TFT_BLACK);
 
   sdSpi.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
@@ -378,12 +379,12 @@ void setup() {
   }
 
   showWifiConnectedPage(tft, WiFi.localIP().toString());
-  bootstrapMissingAssets();
   setupSettingsServer();
   configTime(7 * 3600, 0, "pool.ntp.org", "time.nist.gov");
   fetchAllBitkubTickers();
   lastPriceUpdateAt = millis();
-  delay(500);
+  enterPage(PAGE_PROFILE);
+  bootstrapMissingAssets();
   enterPage(PAGE_PROFILE);
 }
 

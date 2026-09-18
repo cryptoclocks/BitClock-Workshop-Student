@@ -47,6 +47,13 @@ static void maskProfileToCircle(TFT_eSPI& screen) {
 }
 
 static void drawCoinMark(TFT_eSPI& screen, const Coin& coin, int centerX, int centerY) {
+  String symbol = coin.symbol;
+  symbol.toLowerCase();
+  String logoPath = String("/system/") + symbol + ".jpg";
+  if (SD.exists(logoPath)) {
+    drawSdJpeg(screen, logoPath.c_str(), centerX - 24, centerY - 24);
+    return;
+  }
   screen.fillCircle(centerX, centerY, 24, coin.color);
   screen.drawCircle(centerX, centerY, 24, TFT_WHITE);
   screen.setTextDatum(MC_DATUM);
@@ -109,6 +116,7 @@ void showProfilePage(TFT_eSPI& screen, bool sdReady) {
 
 void showCoinPage(TFT_eSPI& screen, const Coin& coin, size_t coinIndex) {
   screen.fillScreen(TFT_BLACK);
+  if (SD.exists("/system/page2.jpg")) drawSdJpeg(screen, "/system/page2.jpg", 0, 0);
   const int boxWidth = 95;
   const int boxHeight = 48;
   screen.drawRoundRect(20, 14, boxWidth, boxHeight, 6, coin.color);
@@ -142,6 +150,7 @@ void showCoinPage(TFT_eSPI& screen, const Coin& coin, size_t coinIndex) {
     screen.drawString(low, 60 - screen.textWidth(low, 2) / 2, 200, 2);
     screen.drawString(high, 255 - screen.textWidth(high, 2) / 2, 200, 2);
   }
+  if (SD.exists("/system/logo.jpg")) drawSdJpeg(screen, "/system/logo.jpg", 144, 175);
   centerText(screen, "BITKUB  " + String(coinIndex + 1) + "/" + String(COIN_COUNT), 232, 1, TFT_DARKGREY);
 }
 
